@@ -1,0 +1,46 @@
+<header>
+    <div class="logo">
+        <a href="{{ shop.url }}"><img src="{{ 'logo.png' | asset_url }}" alt="Logo de la tienda"></a>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="{{ shop.url }}#inicio">Inicio</a></li>
+            <li><a href="{{ shop.url }}#productos">Productos</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+        </ul>
+    </nav>
+    <div class="header-icons">
+    <select class="selector-idioma">
+        <option value="es">ES</option>
+        <option value="en">EN</option>
+    </select>
+    <select class="selector-divisa">
+        <option value="eur">€</option>
+        <option value="usd">$</option>
+    </select>
+    <i class="fas fa-user"></i>
+    <div class="cart-icon-container">
+        <i class="fas fa-shopping-cart" id="cart-icon"></i>
+        <span class="cart-count" id="cart-count">0</span>
+    </div>
+
+    <div class="cart-sidebar" id="cart-sidebar">
+        <div class="cart-header">
+            <h2>Tu carrito</h2>
+            <button class="close-cart" id="close-cart">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="cart-items" id="cart-items">
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cart-total">0.00€</span>
+            </div>
+            <button class="btn-checkout">Finalizar compra</button>
+        </div>
+    </div>
+    <div class="cart-overlay" id="cart-overlay"></div>
+    </div>
+</header>

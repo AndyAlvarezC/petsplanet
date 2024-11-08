@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collar luminoso</title>
+    <link rel="stylesheet" href="{{ 'product.css' | asset_url }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="icon" href="{{ 'logo.png' | asset_url }}" type="image/x-icon">
+</head>
+<body>
+    <div class="producto-contenedor">
+        <div class="galeria">
+            <img src="{{ 'collar-luminoso.png' | asset_url }}" alt="Miniatura 1" class="miniatura">
+            <img src="{{ 'collar-medidas.png' | asset_url }}" alt="Miniatura 2" class="miniatura">
+            <img src="{{ 'collar-colores.png' | asset_url }}" alt="Miniatura 3" class="miniatura">
+            <img src="{{ 'collar-negro.png' | asset_url }}" alt="Miniatura 4" class="miniatura">
+            <img src="{{ 'collar-rojo.png' | asset_url }}" alt="Miniatura 5" class="miniatura">
+            <img src="{{ 'collar-naranja.png' | asset_url }}" alt="Miniatura 6" class="miniatura">
+            <img src="{{ 'collar-amarillo.png' | asset_url }}" alt="Miniatura 7" class="miniatura">
+            <img src="{{ 'collar-verde.png' | asset_url }}" alt="Miniatura 8" class="miniatura">
+            <img src="{{ 'collar-azul.png' | asset_url }}" alt="Miniatura 9" class="miniatura">
+            <img src="{{ 'collar-rosa.png' | asset_url }}" alt="Miniatura 10" class="miniatura">
+        </div>
+    
+        <div class="imagen-principal">
+            <img src="{{ 'collar-luminoso.png' | asset_url }}" alt="Producto principal">
+        </div>
+
+        <div class="info-producto">
+            <h2>Collar luminoso</h2>
+            <h3 class="precio">
+                <span class="precio-descuento">{{ product.price | money }}</span>
+                <span class="precio-original">{{ product.compare_at_price | money }}</span>
+            </h3>
+
+            <p>Collar de nailon con luz LED de alta visibilidad para mantener a tu mascota segura en la oscuridad. Disponible en varios colores brillantes, resistente al agua y diseñado para paseos nocturnos. Combina estilo y seguridad para cada salida.</p>
+            <div class="resenas">
+                <div class="puntuacion">
+                    <span class="estrellas">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star-half-alt"></i>
+                    </span>
+                    <span class="puntuacion-numero">4.5</span>
+                </div>
+                <div class="detalle-resenas">
+                    <span class="num-resenas">808 valoraciones</span>
+                    <span>|</span>
+                </div>
+                <span class="productos-vendidos">5.000+ vendidos</span>
+            </div>
+            
+            <hr>
+
+            <div class="colores">
+                <h3>Color: <span id="color-seleccionado"></span></h3>
+                <div class="opciones-colores">
+                    <div class="opcion-color" data-color="Negro" style="background-image: url({{ 'collar-negro.png' | asset_url }})"></div>
+                    <div class="opcion-color" data-color="Rojo" style="background-image: url({{ 'collar-rojo.png' | asset_url }})"></div>
+                    <div class="opcion-color" data-color="Naranja" style="background-image: url({{ 'collar-naranja.png' | asset_url }})"></div>
+                    <div class="opcion-color" data-color="Amarillo" style="background-image: url({{ 'collar-amarillo.png' | asset_url }})"></div>
+                    <div class="opcion-color" data-color="Verde" style="background-image: url({{ 'collar-verde.png' | asset_url }})"></div>
+                    <div class="opcion-color" data-color="Azul" style="background-image: url({{ 'collar-azul.png' | asset_url }})"></div>
+                    <div class="opcion-color" data-color="Rosa" style="background-image: url({{ 'collar-rosa.png' | asset_url }})"></div>
+                </div>
+            </div>
+            
+            <div class="tallas">
+                <h3>Talla: <span id="talla-seleccionada"></span></h3>
+                <div class="opciones-tallas">
+                    <button class="talla" data-talla="XS">XS (28-38cm)</button>
+                    <button class="talla" data-talla="S">S (34-41cm)</button>
+                    <button class="talla" data-talla="M">M (37-46cm)</button>
+                    <button class="talla" data-talla="L">L (41-52cm)</button>
+                    <button class="talla" data-talla="XL">XL (42-56cm)</button>
+                </div>
+            </div>
+
+            <div class="cantidad">
+                <h3>Cantidad</h3>
+                <div class="contador">
+                    <button class="btn-cantidad" id="btn-menor">-</button>
+                    <span id="cantidad" class="cantidad-numero">1</span>
+                    <button class="btn-cantidad" id="btn-mayor">+</button>
+                </div>
+            </div>
+            
+    
+            <div class="acciones">
+                <button class="btn-carrito">Añadir a la cesta</button>
+            </div>
+        </div>
+    </div>
+    <div class="cart-modal" style="display:none;">
+        <h2>Carrito de compras</h2>
+        <p>Producto añadido al carrito</p>
+        <button onclick="closeCart()">Cerrar Carrito</button>
+    </div>
+
+    <script id="ProductJson-product-template" type="application/json">
+        {{ product | json }}
+    </script>
+    <script src="{{ 'main.js' | asset_url }}"></script>
+</body>
+</html>

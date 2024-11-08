@@ -1,0 +1,198 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    scroll-behavior: smooth;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #C19A6B;
+    --secondary-color: #f5f5f5;
+    --dark-color: #333;
+}
+
+section {
+    scroll-margin-top: 5rem;
+}
+
+#inicio {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-image: url("img1.png"), url("img2.png");
+    background-size: 50%, 100%;
+    background-position: left, right;
+    background-repeat: no-repeat;
+    text-align: center;
+}
+
+#inicio h1 {
+    font-size: 4.5rem;
+    color: var(--secondary-color);
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+#inicio p {
+    font-size: 1.5rem;
+    color: var(--secondary-color);
+    text-align: center;
+    margin-top: 1.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    text-decoration: none;
+    border-color: transparent;
+    border-radius: 0.5rem;
+    transition: background-color 0.5s ease, transform 0.5s ease;
+    position: relative;
+    top: 10rem;    
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.btn:hover {
+    background-color: var(--dark-color);
+    transform: scale(1.1);
+    cursor: pointer;
+}
+
+.productos-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 2rem;
+    background-color: var(--secondary-color);
+    width: 100%;
+    height: 100vh;
+}
+
+.titulo-productos {
+    margin: 3rem 0;
+    color: var(--dark-color);
+    font-size: 2.5rem;
+    text-align: center;
+}
+
+.enlace-producto {
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+    width: auto;
+}
+
+.producto {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 2rem;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    background-color: var(--secondary-color);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    transition: transform 0.5s ease;
+    cursor: pointer;
+}
+
+.producto:hover {
+    transform: scale(1.05);
+}
+
+.productos-lista {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.imagen-producto {
+    width: 100%;
+    height: 20rem;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    margin-bottom: 1.5rem;
+}
+
+.productos-container p {
+    color: var(--dark-color);
+    margin: 0.5rem 0;
+}
+
+.btn-product {
+    padding: 1rem;
+    background-color: var(--primary-color);
+    color: var(--secondary-color);
+    border: none;
+    border-radius: 0.5rem;
+    transition: background-color 0.5s ease;
+    cursor: pointer;
+    margin: 1rem 0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.btn-product:hover {
+    background-color: var(--dark-color);
+}
+
+.descripcion-productos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6rem;
+    background-color: var(--primary-color);
+    width: 100%;
+}
+
+.descripcion-producto {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 2rem;
+    margin: 2rem 0;
+    background-color: var(--secondary-color);
+    border-radius: 0.5rem;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
+    transition: transform 0.5s ease;
+}
+
+.descripcion-producto:hover {
+    cursor: pointer;
+    transform: scale(1.02);
+}
+
+.imagen-grande {
+    width: 20%;
+    height: auto;
+    max-height: 30%;
+    object-fit: cover;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    margin-right: 2rem;
+}
+
+.texto-producto {
+    width: 60%;
+}
+
+.texto-producto h3 {
+    margin: 0.5rem 0;
+    color: var(--dark-color);
+    font-size: 2rem;
+}
+
+.texto-producto p {
+    color: var(--dark-color);
+    text-align: left;
+}
