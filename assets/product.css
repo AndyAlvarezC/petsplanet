@@ -295,18 +295,3 @@
 .talla.selected {
     outline: 1.5px solid var(--dark-color);
 }
-
-#cart-count {
-    display: none;
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background: #ff4444;
-    color: white;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    font-size: 12px;
-    justify-content: center;
-    align-items: center;
-}
