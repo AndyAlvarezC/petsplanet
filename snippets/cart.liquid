@@ -1,6 +1,6 @@
 <div class="cart-icon-container" id="cart-icon-container">
     <i class="fas fa-shopping-cart" id="cart-icon"></i>
-    <span class="cart-count" id="cart-count">0</span>
+    <span class="cart-count" id="cart-count">{{ cart.item_count }}</span>
 </div>
 
 <div class="cart-sidebar" id="cart-sidebar">
@@ -10,13 +10,38 @@
             <i class="fas fa-times"></i>
         </button>
     </div>
-    <div class="cart-items" id="cart-items"></div>
+    <div class="cart-items" id="cart-items">
+        {% for item in cart.items %}
+            <div class="cart-item" data-variant-id="{{ item.variant_id }}">
+                <img src="{{ item.image | img_url: 'small' }}" alt="{{ item.product.title }}" class="cart-item-image">
+                <div class="cart-item-details">
+                    <div class="cart-item-title">{{ item.product.title }}</div>
+                    {% if item.variant %}
+                        <div class="cart-item-variants">
+                            <span>{{ item.variant.title }}</span>
+                        </div>
+                    {% endif %}
+                    <div class="cart-item-price">{{ item.line_price | money }}</div>
+                    <div class="cart-item-quantity">
+                        <button class="btn-quantity" onclick="CartState.updateQuantity('{{ item.variant_id }}', {{ item.quantity | minus: 1 }})">-</button>
+                        <span>{{ item.quantity }}</span>
+                        <button class="btn-quantity" onclick="CartState.updateQuantity('{{ item.variant_id }}', {{ item.quantity | plus: 1 }})">+</button>
+                    </div>
+                </div>
+                <button class="remove-item" onclick="CartState.removeItem('{{ item.variant_id }}')">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        {% endfor %}
+    </div>
     <div class="cart-footer">
         <div class="cart-total">
             <span>Total:</span>
-            <span id="cart-total">0.00€</span>
+            <span id="cart-total">{{ cart.total_price | money }}</span>
         </div>
-        <button class="btn-checkout">Finalizar compra</button>
+        <a href="#" class="btn-checkout" id="checkout-button" {% if cart.item_count == 0 %}disabled{% endif %}>
+            Finalizar compra
+        </a>
     </div>
 </div>
 

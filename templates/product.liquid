@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Collar luminoso</title>
+    <title>{{ product.title }}</title>
     <link rel="stylesheet" href="{{ 'product.css' | asset_url }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" href="{{ 'logo.png' | asset_url }}" type="image/x-icon">
@@ -12,71 +12,66 @@
 <body>
     <div class="producto-contenedor">
         <div class="galeria">
-            <img src="{{ 'collar-luminoso.png' | asset_url }}" alt="Miniatura 1" class="miniatura">
-            <img src="{{ 'collar-medidas.png' | asset_url }}" alt="Miniatura 2" class="miniatura">
-            <img src="{{ 'collar-colores.png' | asset_url }}" alt="Miniatura 3" class="miniatura">
-            <img src="{{ 'collar-negro.png' | asset_url }}" alt="Miniatura 4" class="miniatura">
-            <img src="{{ 'collar-rojo.png' | asset_url }}" alt="Miniatura 5" class="miniatura">
-            <img src="{{ 'collar-naranja.png' | asset_url }}" alt="Miniatura 6" class="miniatura">
-            <img src="{{ 'collar-amarillo.png' | asset_url }}" alt="Miniatura 7" class="miniatura">
-            <img src="{{ 'collar-verde.png' | asset_url }}" alt="Miniatura 8" class="miniatura">
-            <img src="{{ 'collar-azul.png' | asset_url }}" alt="Miniatura 9" class="miniatura">
-            <img src="{{ 'collar-rosa.png' | asset_url }}" alt="Miniatura 10" class="miniatura">
+            {% for image in product.images %}
+                <img src="{{ image | img_url: 'medium' }}" alt="{{ image.alt }}" class="miniatura" data-color="{{ image.alt }}">
+            {% endfor %}
         </div>
-    
+
         <div class="imagen-principal">
-            <img src="{{ 'collar-luminoso.png' | asset_url }}" alt="Producto principal">
+            <img src="{{ product.featured_image | img_url: 'large' }}" alt="Producto principal" id="imagen-principal">
         </div>
 
         <div class="info-producto">
-            <h2>Collar luminoso</h2>
+            <h2>{{ product.title }}</h2>
             <h3 class="precio">
-                <span class="precio-descuento">{{ product.price | money }}</span>
-                <span class="precio-original">{{ product.compare_at_price | money }}</span>
+                <span class="precio-descuento" id="precio-descuento">{{ product.price | money }}</span>
+                {% if product.compare_at_price > product.price %}
+                    <span class="precio-original">{{ product.compare_at_price | money }}</span>
+                {% endif %}
             </h3>
 
-            <p>Collar de nailon con luz LED de alta visibilidad para mantener a tu mascota segura en la oscuridad. Disponible en varios colores brillantes, resistente al agua y diseñado para paseos nocturnos. Combina estilo y seguridad para cada salida.</p>
+            <p>{{ product.description }}</p>
             <div class="resenas">
                 <div class="puntuacion">
                     <span class="estrellas">
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star"></i>
-                        <i class="fas fa-star-half-alt"></i>
+                        {% for i in (1..5) %}
+                            <i class="fas fa-star{% if i <= product.rating %}-half-alt{% endif %}"></i>
+                        {% endfor %}
                     </span>
-                    <span class="puntuacion-numero">4.5</span>
+                    <span class="puntuacion-numero">{{ product.rating }}</span>
                 </div>
                 <div class="detalle-resenas">
-                    <span class="num-resenas">808 valoraciones</span>
+                    <span class="num-resenas">{{ product.reviews_count }} valoraciones</span>
                     <span>|</span>
                 </div>
-                <span class="productos-vendidos">5.000+ vendidos</span>
+                <span class="productos-vendidos">{{ product.sold_count }} vendidos</span>
             </div>
-            
+
             <hr>
 
             <div class="colores">
-                <h3>Color: <span id="color-seleccionado"></span></h3>
+                <h3>Color: <span id="color-seleccionado">{{ product.options[0].name }}</span></h3>
                 <div class="opciones-colores">
-                    <div class="opcion-color" data-color="Negro" style="background-image: url({{ 'collar-negro.png' | asset_url }})"></div>
-                    <div class="opcion-color" data-color="Rojo" style="background-image: url({{ 'collar-rojo.png' | asset_url }})"></div>
-                    <div class="opcion-color" data-color="Naranja" style="background-image: url({{ 'collar-naranja.png' | asset_url }})"></div>
-                    <div class="opcion-color" data-color="Amarillo" style="background-image: url({{ 'collar-amarillo.png' | asset_url }})"></div>
-                    <div class="opcion-color" data-color="Verde" style="background-image: url({{ 'collar-verde.png' | asset_url }})"></div>
-                    <div class="opcion-color" data-color="Azul" style="background-image: url({{ 'collar-azul.png' | asset_url }})"></div>
-                    <div class="opcion-color" data-color="Rosa" style="background-image: url({{ 'collar-rosa.png' | asset_url }})"></div>
+                    {% assign unique_colors = "" %}
+                    {% for variant in product.variants %}
+                        {% unless unique_colors contains variant.option1 %}
+                            <div class="opcion-color" data-color="{{ variant.option1 }}" data-image="{{ variant.image.src | img_url: 'large' }}" style="background-image: url('{{ variant.image.src | img_url: 'small' }}')" onclick="cambiarColor('{{ variant.option1 }}', '{{ variant.image.src }}', {{ variant.price | money_without_currency }})"></div>
+                            {% assign unique_colors = unique_colors | append: variant.option1 | append: "," %}
+                        {% endunless %}
+                    {% endfor %}
                 </div>
             </div>
-            
+
             <div class="tallas">
-                <h3>Talla: <span id="talla-seleccionada"></span></h3>
+                <h3>Talla: <span id="talla-seleccionada">Selecciona una talla</span></h3>
                 <div class="opciones-tallas">
-                    <button class="talla" data-talla="XS">XS (28-38cm)</button>
-                    <button class="talla" data-talla="S">S (34-41cm)</button>
-                    <button class="talla" data-talla="M">M (37-46cm)</button>
-                    <button class="talla" data-talla="L">L (41-52cm)</button>
-                    <button class="talla" data-talla="XL">XL (42-56cm)</button>
+                    {% assign unique_sizes = "" %}
+                    {% for variant in product.variants %}
+                        {% unless unique_sizes contains variant.option2 %}
+                            <button class="talla" data-talla="{{ variant.option2 }}" onclick="cambiarTalla('{{ variant.option2 }}', {{ variant.price | money_without_currency }})">{{ variant.option2 }}</button>
+                            {% assign unique_sizes = unique_sizes | append: variant.option2 | append: "," %}
+                        {% endunless %}
+                    {% endfor %}
                 </div>
             </div>
 
@@ -88,18 +83,32 @@
                     <button class="btn-cantidad" id="btn-mayor">+</button>
                 </div>
             </div>
-            
-    
+
             <div class="acciones">
                 <button class="btn-carrito">Añadir a la cesta</button>
             </div>
         </div>
     </div>
+
     <div class="cart-modal" style="display:none;">
         <h2>Carrito de compras</h2>
         <p>Producto añadido al carrito</p>
         <button onclick="closeCart()">Cerrar Carrito</button>
     </div>
+
+    <div class='jdgm-carousel-wrapper'> 
+        {% assign jm_metafields = shop.metafields.judgeme %} 
+        <div class='jdgm-carousel-title-and-link'> 
+        <h2 class='jdgm-carousel-title'>Let customers speak for us</h2> 
+        <span class='jdgm-all-reviews-rating-wrapper' href='javascript:void(0)'> 
+            <span style='display:block' data-score='{{ jm_metafields.all_reviews_rating }}' class='jdgm-all-reviews-rating' aria-label='{{ jm_metafields.all_reviews_rating }} stars' tabindex='0' role='img'></span> 
+            <span style='display: block' class='jdgm-carousel-number-of-reviews' data-number-of-reviews='{{ jm_metafields.all_reviews_count }}'> 
+    from {{ shop.metafields.judgeme.all_reviews_count }} reviews 
+            </span> 
+        </span> 
+        </div> 
+        {{ jm_metafields.featured_carousel }} 
+    </div> 
 
     <script id="ProductJson-product-template" type="application/json">
         {{ product | json }}

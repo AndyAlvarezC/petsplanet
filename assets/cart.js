@@ -1,3 +1,9 @@
+// Asegúrate de que el DOM esté completamente cargado
+document.addEventListener('DOMContentLoaded', () => {
+    // Inicia el carrito después de que el DOM haya cargado
+    CartState.initializeCart();
+});
+
 const CartState = {
     items: [],
     
@@ -7,6 +13,7 @@ const CartState = {
         if (savedCart) {
             this.items = JSON.parse(savedCart);
             this.updateUI();
+            this.updateCheckoutButton(); // Actualiza el botón de checkout
         }
     },
     
@@ -14,6 +21,7 @@ const CartState = {
     save() {
         localStorage.setItem('shoppingCart', JSON.stringify(this.items));
         this.updateUI();
+        this.updateCheckoutButton(); // Actualiza el botón de checkout
     },
     
     // Actualizar la UI del carrito
@@ -65,7 +73,7 @@ const CartState = {
         }
     },
     
-    // Añadir item al carrito
+    // Agregar un item al carrito
     addItem(item) {
         const existingItem = this.items.find(i => i.variantId === item.variantId);
         if (existingItem) {
@@ -75,7 +83,7 @@ const CartState = {
         }
         this.save();
     },
-
+    
     // Actualizar cantidad de un item
     updateQuantity(variantId, newQuantity) {
         if (newQuantity < 1) {
@@ -96,33 +104,35 @@ const CartState = {
         this.save();
     },
 
-    // Inicializar eventos del carrito
-    initializeCart() {
-        // Cargar estado del carrito
-        this.load();
-        
-        // Inicializar eventos del carrito
-        const cartIcon = document.getElementById('cart-icon');
-        const cartCount = document.getElementById('cart-count');  // Obtener el contador del carrito
-        const cartSidebar = document.getElementById('cart-sidebar');
-        const cartOverlay = document.getElementById('cart-overlay');
-        const closeCart = document.getElementById('close-cart');
-        
-        if (cartIcon) {
-            cartIcon.addEventListener('click', () => this.openCart());
-        }
-        if (cartCount) {
-            // Cuando se hace clic en el contador, abrir el carrito también
-            cartCount.addEventListener('click', () => this.openCart());
-        }
-        if (closeCart) {
-            closeCart.addEventListener('click', () => this.closeCart());
-        }
-        if (cartOverlay) {
-            cartOverlay.addEventListener('click', () => this.closeCart());
+    updateCheckoutButton() {
+        const checkoutButton = document.getElementById('checkout-button');
+        const totalItems = this.items.reduce((sum, item) => sum + item.quantity, 0);
+    
+        if (checkoutButton) {
+            if (totalItems === 0) {
+                checkoutButton.disabled = true;
+                checkoutButton.href = "#"; // Si el carrito está vacío, deshabilita el botón
+            } else {
+                checkoutButton.disabled = false;
+    
+                // Construir la URL de checkout con los productos del carrito
+                let checkoutUrl = "https://2vwf7p-jv.myshopify.com/cart?";
+    
+                // Construir los parámetros de cada producto (variantId y quantity)
+                const itemsParam = this.items.map(item => 
+                    `${item.variantId}:${item.quantity}`).join('&');
+                
+                checkoutUrl += itemsParam;  // Añadir los parámetros al final de la URL
+    
+                // Imprimir la URL para depuración (opcional)
+                console.log(checkoutUrl);
+    
+                checkoutButton.href = checkoutUrl;  // Actualizar el href del botón
+            }
         }
     },
     
+    // Función para abrir el carrito
     openCart() {
         const cartSidebar = document.getElementById('cart-sidebar');
         const cartOverlay = document.getElementById('cart-overlay');
@@ -130,15 +140,41 @@ const CartState = {
         if (cartOverlay) cartOverlay.classList.add('show');
     },
     
+    // Función para cerrar el carrito
     closeCart() {
         const cartSidebar = document.getElementById('cart-sidebar');
         const cartOverlay = document.getElementById('cart-overlay');
         if (cartSidebar) cartSidebar.classList.remove('open');
         if (cartOverlay) cartOverlay.classList.remove('show');
+    },
+
+    // Inicializar el carrito
+    initializeCart() {
+        this.load();
+
+        // Configuración de eventos
+        const cartIcon = document.getElementById('cart-icon');
+        const cartCount = document.getElementById('cart-count');
+        const closeCart = document.getElementById('close-cart');
+        const cartOverlay = document.getElementById('cart-overlay');
+        const checkoutButton = document.getElementById('checkout-button');
+
+        if (cartIcon) cartIcon.addEventListener('click', () => this.openCart());
+        if (cartCount) cartCount.addEventListener('click', () => this.openCart());
+        if (closeCart) closeCart.addEventListener('click', () => this.closeCart());
+        if (cartOverlay) cartOverlay.addEventListener('click', () => this.closeCart());
+
+        if (checkoutButton) {
+            checkoutButton.addEventListener('click', (event) => {
+                event.preventDefault();
+                if (this.items.length > 0) {
+                    window.location.href = "https://2vwf7p-jv.myshopify.com/checkout";
+                } else {
+                    alert("El carrito está vacío.");
+                }
+            });
+        }
+
+        this.updateCheckoutButton(); // Llama a updateCheckoutButton al inicializar el carrito
     }
 };
-
-// En CartState, agregar este bloque de código para asegurarte de que se llame la inicialización correctamente
-document.addEventListener('DOMContentLoaded', () => {
-    CartState.initializeCart();
-});

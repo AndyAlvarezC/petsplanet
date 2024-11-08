@@ -27,6 +27,7 @@
     padding: 0.3rem 3.5rem;
     -ms-overflow-style: none;
     scrollbar-width: none;
+    transition: all 0.3s ease;
 }
 
 .galeria::-webkit-scrollbar {
@@ -46,6 +47,24 @@
 .miniatura:hover {
     transform: scale(1.04);
 }
+
+.galeria {
+    scroll-behavior: smooth;
+}
+
+.galeria {
+    -webkit-overflow-scrolling: touch;
+}
+
+.miniatura {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.miniatura:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+}
+
 
 .imagen-principal img {
     width: 30rem;
