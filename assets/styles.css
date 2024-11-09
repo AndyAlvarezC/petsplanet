@@ -85,14 +85,14 @@ section {
 .enlace-producto {
     text-decoration: none;
     color: inherit;
-    display: inline-block;
-    width: auto;
+    display: flex;
+    width: calc(33.333% - 2rem);
 }
 
 .producto {
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     margin: 2rem;
     width: 100%;
@@ -114,32 +114,47 @@ section {
     justify-content: center;
     flex-wrap: wrap;
     gap: 2rem;
+    width: 80%;
 }
 
 .imagen-producto {
     width: 100%;
-    height: 20rem;
     object-fit: cover;
     border-radius: 0.5rem;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
-.productos-container p {
-    color: var(--dark-color);
+.producto h3 {
+    font-size: 1.2rem;
     margin: 0.5rem 0;
+    text-align: center;
+    width: 100%;
+}
+
+.producto p {
+    flex-grow: 1;
+    text-align: center;
+    margin: 0.5rem 0;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    width: 100%;
 }
 
 .btn-product {
+    width: 50%;
     padding: 1rem;
+    font-size: 1.2rem;
     background-color: var(--primary-color);
     color: var(--secondary-color);
     border: none;
     border-radius: 0.5rem;
     transition: background-color 0.5s ease;
     cursor: pointer;
-    margin: 1rem 0;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    margin-top: 1rem;
 }
 
 .btn-product:hover {

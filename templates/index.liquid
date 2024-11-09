@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PetsPlanet</title>
+    <title>{{ shop.name }}</title>
     <link rel="stylesheet" href="{{ 'styles.css' | asset_url }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" href="{{ 'logo.png' | asset_url }}" type="image/x-icon">
     <link rel="stylesheet" href="{{ 'cart.css' | asset_url }}">
-
 </head>
 <body>
     <section id="inicio">
         <div>
-            <h1>Bienvenidos a PetsPlanet</h1>
+            <h1>Bienvenidos a {{ shop.name }}</h1>
             <p>La mejor tienda de animales</p>
             <a href="#productos" class="btn">Ver productos</a>        
         </div>
@@ -23,58 +22,31 @@
         <div class="productos-container">
             <h2 class="titulo-productos">Productos</h2>
             <div class="productos-lista">
-                <a href="{{ shop.url }}/products/collar-luminoso" class="enlace-producto">
-                    <div class="producto">
-                        <img src="{{ 'collar-luminoso.png' | asset_url }}" alt="Collar luminoso" class="imagen-producto">
-                        <h3>Collar luminoso</h3>
-                        <p>Descripción del producto 1</p>
-                        <button class="btn-product">Ver producto</button>
-                    </div>
-                </a>
-                
-                <a href="{{ shop.url }}/products/dispensador-comida-y-agua" class="enlace-producto">
-                    <div class="producto">
-                        <img src="{{ 'dispensador-comida-y-agua.png' | asset_url }}" alt="Dispensador comida y agua" class="imagen-producto">
-                        <h3>Dispensador comida y agua</h3>
-                        <p>Descripción del producto 2</p>
-                        <button class="btn-product">Ver producto</button>
-                    </div>
-                </a>
-                
-                <a href="{{ shop.url }}/products/pelota-electrica" class="enlace-producto">
-                    <div class="producto">
-                        <img src="{{ 'pelota-electrica.png' | asset_url }}" alt="Pelota eléctrica" class="imagen-producto">
-                        <h3>Pelota eléctrica</h3>
-                        <p>Descripción del producto 3</p>
-                        <button class="btn-product">Ver producto</button>
-                    </div>
-                </a>
+                {% for product in collections.all.products %}
+                    <a href="{{ product.url }}" class="enlace-producto">
+                        <div class="producto">
+                            <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}" class="imagen-producto">
+                            <h3>{{ product.title }}</h3>
+                            <p>{{ product.description | strip_html | truncate: 50 }}</p>
+                            <button class="btn-product">Ver producto</button>
+                        </div>
+                    </a>
+                {% endfor %}
             </div>
         </div>
         <div class="descripcion-productos">
-            <div class="descripcion-producto">
-                <img src="{{ 'collar-luminoso.png' | asset_url }}" alt="Collar luminoso grande" class="imagen-grande">
-                <div class="texto-producto">
-                    <h3>Collar luminoso</h3>
-                    <p>Esta es una descripción más detallada del collar luminoso. Este producto es ideal para mantener a tu mascota visible durante la noche.</p>
+            {% for product in collections.all.products %}
+                <div class="descripcion-producto">
+                    <img src="{{ product.featured_image | img_url: 'large' }}" alt="{{ product.title }} grande" class="imagen-grande">
+                    <div class="texto-producto">
+                        <h3>{{ product.title }}</h3>
+                        <p>{{ product.description }}</p>
+                    </div>
                 </div>
-            </div>
-            <div class="descripcion-producto">
-                <img src="{{ 'dispensador-comida-y-agua.png' | asset_url }}" alt="Dispensario comida y agua grande" class="imagen-grande">
-                <div class="texto-producto">
-                    <h3>Dispensario comida y agua</h3>
-                    <p>Este dispensario asegura que tu mascota siempre tenga acceso a agua y comida fresca. Perfecto para los días ocupados.</p>
-                </div>
-            </div>
-            <div class="descripcion-producto">
-                <img src="{{ 'pelota-electrica.png' | asset_url }}" alt="Pelota electrica grande" class="imagen-grande">
-                <div class="texto-producto">
-                    <h3>Pelota electrica</h3>
-                    <p>Una pelota que mantendrá a tu mascota entretenida durante horas. Ideal para jugar tanto en interiores como en exteriores.</p>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </section>
+    
     <script src="{{ 'cart.js' | asset_url }}"></script>
     <script src="{{ 'main.js' | asset_url }}"></script>
 </body>
