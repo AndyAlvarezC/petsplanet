@@ -16,19 +16,19 @@
                 <img src="{{ item.image | img_url: 'small' }}" alt="{{ item.product.title }}" class="cart-item-image">
                 <div class="cart-item-details">
                     <div class="cart-item-title">{{ item.product.title }}</div>
-                    {% if item.variant %}
+                    {% if item.variant.title != 'Default Title' %}
                         <div class="cart-item-variants">
                             <span>{{ item.variant.title }}</span>
                         </div>
                     {% endif %}
                     <div class="cart-item-price">{{ item.line_price | money }}</div>
                     <div class="cart-item-quantity">
-                        <button class="btn-quantity" onclick="CartState.updateQuantity('{{ item.variant_id }}', {{ item.quantity | minus: 1 }})">-</button>
+                        <button class="btn-quantity" data-variant-id="{{ item.variant_id }}" data-action="decrease">-</button>
                         <span>{{ item.quantity }}</span>
-                        <button class="btn-quantity" onclick="CartState.updateQuantity('{{ item.variant_id }}', {{ item.quantity | plus: 1 }})">+</button>
+                        <button class="btn-quantity" data-variant-id="{{ item.variant_id }}" data-action="increase">+</button>
                     </div>
                 </div>
-                <button class="remove-item" onclick="CartState.removeItem('{{ item.variant_id }}')">
+                <button class="remove-item" data-variant-id="{{ item.variant_id }}">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
@@ -39,7 +39,7 @@
             <span>Total:</span>
             <span id="cart-total">{{ cart.total_price | money }}</span>
         </div>
-        <a href="#" class="btn-checkout" id="checkout-button" {% if cart.item_count == 0 %}disabled{% endif %}>
+        <a href="/checkout" class="btn-checkout" id="checkout-button" {% if cart.item_count == 0 %}disabled{% endif %}>
             Finalizar compra
         </a>
     </div>

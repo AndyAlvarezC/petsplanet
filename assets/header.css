@@ -121,3 +121,31 @@ nav ul li a:hover::after {
 span {
     color: #000;
 }
+
+.language-switcher,
+.currency-switcher {
+    display: inline-flex;
+    gap: 5px;
+}
+
+.lang-btn,
+.currency-btn {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    background: white;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.lang-btn:hover,
+.currency-btn:hover {
+    background: #f5f5f5;
+}
+
+.lang-btn.active,
+.currency-btn.active {
+    background: #333;
+    color: white;
+    border-color: #333;
+}

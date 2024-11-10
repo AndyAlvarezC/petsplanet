@@ -1,45 +1,33 @@
-// Asegúrate de que el DOM esté completamente cargado
-document.addEventListener('DOMContentLoaded', () => {
-    // Inicia el carrito después de que el DOM haya cargado
-    CartState.initializeCart();
-});
-
 const CartState = {
     items: [],
     
-    // Cargar el carrito desde localStorage
     load() {
         const savedCart = localStorage.getItem('shoppingCart');
         if (savedCart) {
             this.items = JSON.parse(savedCart);
             this.updateUI();
-            this.updateCheckoutButton(); // Actualiza el botón de checkout
+            this.updateCheckoutButton();
         }
     },
     
-    // Guardar el carrito en localStorage
     save() {
         localStorage.setItem('shoppingCart', JSON.stringify(this.items));
         this.updateUI();
-        this.updateCheckoutButton(); // Actualiza el botón de checkout
+        this.updateCheckoutButton();
     },
     
-    // Actualizar la UI del carrito
     updateUI() {
         const cartCount = document.getElementById('cart-count');
         const totalItems = this.items.reduce((sum, item) => sum + item.quantity, 0);
         
-        // Actualizar contador del carrito
         if (cartCount) {
             cartCount.textContent = totalItems;
             cartCount.style.display = totalItems > 0 ? 'flex' : 'none';
         }
         
-        // Actualizar contenido del carrito
         this.renderItems();
     },
     
-    // Renderizar items del carrito
     renderItems() {
         const cartItemsContainer = document.getElementById('cart-items');
         if (!cartItemsContainer) return;
@@ -50,58 +38,165 @@ const CartState = {
                 <div class="cart-item-details">
                     <div class="cart-item-title">${item.title}</div>
                     <div class="cart-item-variants">
-                        <span>${item.color}</span> | <span>${item.size}</span>
+                        ${item.variant ? `<span>${item.variant}</span>` : ''}
                     </div>
                     <div class="cart-item-price">${formatMoney(item.price)}</div>
                     <div class="cart-item-quantity">
-                        <button class="btn-quantity" onclick="CartState.updateQuantity('${item.variantId}', ${item.quantity - 1})">-</button>
+                        <button class="btn-quantity" data-variant-id="${item.variantId}" data-action="decrease">-</button>
                         <span>${item.quantity}</span>
-                        <button class="btn-quantity" onclick="CartState.updateQuantity('${item.variantId}', ${item.quantity + 1})">+</button>
+                        <button class="btn-quantity" data-variant-id="${item.variantId}" data-action="increase">+</button>
                     </div>
                 </div>
-                <button class="remove-item" onclick="CartState.removeItem('${item.variantId}')">
+                <button class="remove-item" data-variant-id="${item.variantId}">
                     <i class="fas fa-trash"></i>
                 </button>
             </div>
         `).join('');
         
-        // Actualizar total
         const cartTotal = document.getElementById('cart-total');
         if (cartTotal) {
             const total = this.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
             cartTotal.textContent = formatMoney(total);
         }
+
+        // Agregar event listeners después de renderizar
+        this.addEventListeners();
+    },
+
+    addEventListeners() {
+        const cartItemsContainer = document.getElementById('cart-items');
+        if (!cartItemsContainer) return;
+
+        // Event delegation para los botones de cantidad
+        cartItemsContainer.addEventListener('click', async (e) => {
+            const button = e.target.closest('.btn-quantity, .remove-item');
+            if (!button) return;
+
+            const variantId = button.dataset.variantId;
+            if (!variantId) return;
+
+            const item = this.items.find(item => item.variantId === variantId);
+            if (!item) return;
+
+            if (button.classList.contains('remove-item')) {
+                await this.removeItem(variantId);
+            } else if (button.dataset.action === 'decrease') {
+                await this.updateQuantity(variantId, item.quantity - 1);
+            } else if (button.dataset.action === 'increase') {
+                await this.updateQuantity(variantId, item.quantity + 1);
+            }
+        });
     },
     
-    // Agregar un item al carrito
-    addItem(item) {
-        const existingItem = this.items.find(i => i.variantId === item.variantId);
-        if (existingItem) {
-            existingItem.quantity += item.quantity;
-        } else {
-            this.items.push(item);
+    async addItem(item) {
+        try {
+            const existingItem = this.items.find(i => i.variantId === item.variantId);
+            if (existingItem) {
+                existingItem.quantity += item.quantity;
+            } else {
+                this.items.push(item);
+            }
+            
+            const result = await this.addToShopifyCart(item.variantId, item.quantity);
+            if (result) {
+                this.save();
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('Error al agregar al carrito:', error);
+            alert('Hubo un error al agregar el producto al carrito');
+            return false;
         }
-        this.save();
     },
     
-    // Actualizar cantidad de un item
-    updateQuantity(variantId, newQuantity) {
-        if (newQuantity < 1) {
-            this.removeItem(variantId);
-            return;
+    async addToShopifyCart(variantId, quantity) {
+        try {
+            const response = await fetch('/cart/add.js', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    items: [{
+                        id: variantId,
+                        quantity: quantity
+                    }]
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Error en addToShopifyCart:', error);
+            throw error;
         }
-        
-        const item = this.items.find(item => item.variantId === variantId);
-        if (item) {
-            item.quantity = newQuantity;
-            this.save();
+    },
+    
+    async updateQuantity(variantId, newQuantity) {
+        try {
+            if (newQuantity < 1) {
+                return await this.removeItem(variantId);
+            }
+            
+            const item = this.items.find(item => item.variantId === variantId);
+            if (!item) return false;
+
+            const result = await this.updateShopifyCartItem(variantId, newQuantity);
+            if (result) {
+                item.quantity = newQuantity;
+                this.save();
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('Error al actualizar cantidad:', error);
+            alert('Error al actualizar la cantidad del producto');
+            return false;
         }
     },
 
-    // Eliminar item del carrito
-    removeItem(variantId) {
-        this.items = this.items.filter(item => item.variantId !== variantId);
-        this.save();
+    async updateShopifyCartItem(variantId, quantity) {
+        try {
+            const response = await fetch('/cart/change.js', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: variantId,
+                    quantity: quantity
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error ${response.status}: ${response.statusText}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Error en updateShopifyCartItem:', error);
+            throw error;
+        }
+    },
+
+    async removeItem(variantId) {
+        try {
+            const result = await this.updateShopifyCartItem(variantId, 0);
+            if (result) {
+                this.items = this.items.filter(item => item.variantId !== variantId);
+                this.save();
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('Error al eliminar item:', error);
+            alert('Error al eliminar el producto');
+            return false;
+        }
     },
 
     updateCheckoutButton() {
@@ -109,30 +204,11 @@ const CartState = {
         const totalItems = this.items.reduce((sum, item) => sum + item.quantity, 0);
     
         if (checkoutButton) {
-            if (totalItems === 0) {
-                checkoutButton.disabled = true;
-                checkoutButton.href = "#"; // Si el carrito está vacío, deshabilita el botón
-            } else {
-                checkoutButton.disabled = false;
-    
-                // Construir la URL de checkout con los productos del carrito
-                let checkoutUrl = "https://2vwf7p-jv.myshopify.com/cart?";
-    
-                // Construir los parámetros de cada producto (variantId y quantity)
-                const itemsParam = this.items.map(item => 
-                    `${item.variantId}:${item.quantity}`).join('&');
-                
-                checkoutUrl += itemsParam;  // Añadir los parámetros al final de la URL
-    
-                // Imprimir la URL para depuración (opcional)
-                console.log(checkoutUrl);
-    
-                checkoutButton.href = checkoutUrl;  // Actualizar el href del botón
-            }
+            checkoutButton.disabled = totalItems === 0;
+            checkoutButton.href = totalItems === 0 ? "#" : "/checkout";
         }
     },
     
-    // Función para abrir el carrito
     openCart() {
         const cartSidebar = document.getElementById('cart-sidebar');
         const cartOverlay = document.getElementById('cart-overlay');
@@ -140,7 +216,6 @@ const CartState = {
         if (cartOverlay) cartOverlay.classList.add('show');
     },
     
-    // Función para cerrar el carrito
     closeCart() {
         const cartSidebar = document.getElementById('cart-sidebar');
         const cartOverlay = document.getElementById('cart-overlay');
@@ -148,33 +223,25 @@ const CartState = {
         if (cartOverlay) cartOverlay.classList.remove('show');
     },
 
-    // Inicializar el carrito
     initializeCart() {
         this.load();
 
-        // Configuración de eventos
-        const cartIcon = document.getElementById('cart-icon');
-        const cartCount = document.getElementById('cart-count');
-        const closeCart = document.getElementById('close-cart');
-        const cartOverlay = document.getElementById('cart-overlay');
-        const checkoutButton = document.getElementById('checkout-button');
+        // Event Listeners para el carrito
+        document.addEventListener('click', (e) => {
+            const target = e.target;
+            
+            if (target.matches('#cart-icon, #cart-count') || target.closest('#cart-icon-container')) {
+                this.openCart();
+            } else if (target.matches('#close-cart, #cart-overlay')) {
+                this.closeCart();
+            }
+        });
 
-        if (cartIcon) cartIcon.addEventListener('click', () => this.openCart());
-        if (cartCount) cartCount.addEventListener('click', () => this.openCart());
-        if (closeCart) closeCart.addEventListener('click', () => this.closeCart());
-        if (cartOverlay) cartOverlay.addEventListener('click', () => this.closeCart());
-
-        if (checkoutButton) {
-            checkoutButton.addEventListener('click', (event) => {
-                event.preventDefault();
-                if (this.items.length > 0) {
-                    window.location.href = "https://2vwf7p-jv.myshopify.com/checkout";
-                } else {
-                    alert("El carrito está vacío.");
-                }
-            });
-        }
-
-        this.updateCheckoutButton(); // Llama a updateCheckoutButton al inicializar el carrito
+        this.updateCheckoutButton();
     }
 };
+
+// Inicializar cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
+    CartState.initializeCart();
+});

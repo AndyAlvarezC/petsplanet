@@ -10,16 +10,15 @@
         </ul>
     </nav>
     <div class="header-icons">
-    <select class="selector-idioma">
-        <option value="es">ES</option>
-        <option value="en">EN</option>
-    </select>
-    <select class="selector-divisa">
-        <option value="eur">€</option>
-        <option value="usd">$</option>
-    </select>
-    <i class="fas fa-user"></i>
-
-    {% render 'cart' %}
+        <div class="language-switcher">
+            <button class="lang-btn" data-lang="es">ES</button>
+            <button class="lang-btn" data-lang="en">EN</button>
+        </div>
+        <div class="currency-switcher">
+            <button class="currency-btn" data-currency="eur">€</button>
+            <button class="currency-btn" data-currency="usd">$</button>
+        </div>
+        <i class="fas fa-user"></i>
+        {% render 'cart' %}
     </div>
 </header>
