@@ -136,36 +136,31 @@ function findVariantId(color, size) {
     return variant ? variant.id : null;
 }
 
-// Nueva función para añadir al carrito
+// Nueva función para añadir al carrito utilizando la API de Shopify
 async function addToCart(variantId, quantity) {
     try {
-        // Get the current product data
-        const product = getProductVariants();
-        if (!product) {
-            throw new Error('No se pudo obtener la información del producto');
+        // Verificar si el variantId es válido
+        if (!variantId) {
+            throw new Error('La variante seleccionada no es válida');
         }
 
-        // Find the selected variant
-        const variant = product.variants.find(v => v.id === variantId);
-        if (!variant) {
-            throw new Error('Variante no encontrada');
-        }
+        const response = await fetch('/cart/add.js', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                items: [{
+                    id: variantId,
+                    quantity: quantity,
+                }]
+            })
+        });
 
-        // Create the cart item
-        const cartItem = {
-            variantId: variantId,
-            quantity: quantity,
-            title: product.title,
-            price: variant.price,
-            image: variant.featured_image ? variant.featured_image.src : product.featured_image,
-            variant: `${variant.option1}${variant.option2 ? ' / ' + variant.option2 : ''}`
-        };
-
-        // Add to cart using CartState
-        const success = await CartState.addItem(cartItem);
-        
-        if (success) {
-            // Show success message
+        if (response.ok) {
+            const cart = await response.json();
+            console.log('Producto añadido al carrito:', cart);
+            // Mostrar mensaje de éxito
             const cartModal = document.querySelector('.cart-modal');
             if (cartModal) {
                 cartModal.style.display = 'block';
@@ -174,8 +169,10 @@ async function addToCart(variantId, quantity) {
                 }, 2000);
             }
             
-            // Open cart sidebar
+            // Abre el carrito si es necesario
             CartState.openCart();
+        } else {
+            throw new Error('Error al agregar el producto al carrito');
         }
     } catch (error) {
         console.error('Error al agregar al carrito:', error);

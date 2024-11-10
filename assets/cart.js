@@ -1,17 +1,30 @@
 const CartState = {
     items: [],
     
-    load() {
-        const savedCart = localStorage.getItem('shoppingCart');
-        if (savedCart) {
-            this.items = JSON.parse(savedCart);
+    async load() {
+        try {
+            // Cargar desde Shopify en lugar de localStorage
+            const response = await fetch('/cart.js');
+            const shopifyCart = await response.json();
+            
+            this.items = shopifyCart.items.map(item => ({
+                variantId: item.variant_id.toString(),
+                quantity: item.quantity,
+                title: item.product_title,
+                price: item.price,
+                image: item.image,
+                variant: item.variant_title
+            }));
+            
             this.updateUI();
             this.updateCheckoutButton();
+        } catch (error) {
+            console.error('Error loading cart:', error);
         }
     },
     
-    save() {
-        localStorage.setItem('shoppingCart', JSON.stringify(this.items));
+    async save() {
+        // No necesitamos guardar en localStorage, Shopify maneja la persistencia
         this.updateUI();
         this.updateCheckoutButton();
     },
@@ -40,11 +53,11 @@ const CartState = {
                     <div class="cart-item-variants">
                         ${item.variant ? `<span>${item.variant}</span>` : ''}
                     </div>
-                    <div class="cart-item-price">${formatMoney(item.price)}</div>
+                    <div class="cart-item-price">${formatMoney(item.price * item.quantity)}</div>
                     <div class="cart-item-quantity">
-                        <button class="btn-quantity" data-variant-id="${item.variantId}" data-action="decrease">-</button>
+                        <button class="btn-quantity decrease" data-variant-id="${item.variantId}" data-action="decrease">-</button>
                         <span>${item.quantity}</span>
-                        <button class="btn-quantity" data-variant-id="${item.variantId}" data-action="increase">+</button>
+                        <button class="btn-quantity increase" data-variant-id="${item.variantId}" data-action="increase">+</button>
                     </div>
                 </div>
                 <button class="remove-item" data-variant-id="${item.variantId}">
@@ -67,8 +80,12 @@ const CartState = {
         const cartItemsContainer = document.getElementById('cart-items');
         if (!cartItemsContainer) return;
 
-        // Event delegation para los botones de cantidad
-        cartItemsContainer.addEventListener('click', async (e) => {
+        // Remover listeners anteriores
+        const oldContainer = cartItemsContainer.cloneNode(true);
+        cartItemsContainer.parentNode.replaceChild(oldContainer, cartItemsContainer);
+
+        // Event delegation mejorado
+        oldContainer.addEventListener('click', async (e) => {
             const button = e.target.closest('.btn-quantity, .remove-item');
             if (!button) return;
 
@@ -80,9 +97,9 @@ const CartState = {
 
             if (button.classList.contains('remove-item')) {
                 await this.removeItem(variantId);
-            } else if (button.dataset.action === 'decrease') {
+            } else if (button.classList.contains('decrease')) {
                 await this.updateQuantity(variantId, item.quantity - 1);
-            } else if (button.dataset.action === 'increase') {
+            } else if (button.classList.contains('increase')) {
                 await this.updateQuantity(variantId, item.quantity + 1);
             }
         });
@@ -90,16 +107,11 @@ const CartState = {
     
     async addItem(item) {
         try {
-            const existingItem = this.items.find(i => i.variantId === item.variantId);
-            if (existingItem) {
-                existingItem.quantity += item.quantity;
-            } else {
-                this.items.push(item);
-            }
-            
+            // Primero actualizar Shopify
             const result = await this.addToShopifyCart(item.variantId, item.quantity);
             if (result) {
-                this.save();
+                // Luego actualizar el estado local
+                await this.load(); // Recargar todo el carrito desde Shopify
                 return true;
             }
             return false;
@@ -129,7 +141,9 @@ const CartState = {
                 throw new Error(`Error ${response.status}: ${response.statusText}`);
             }
 
-            return await response.json();
+            const result = await response.json();
+            await this.load(); // Recargar el carrito después de añadir
+            return result;
         } catch (error) {
             console.error('Error en addToShopifyCart:', error);
             throw error;
@@ -142,13 +156,9 @@ const CartState = {
                 return await this.removeItem(variantId);
             }
             
-            const item = this.items.find(item => item.variantId === variantId);
-            if (!item) return false;
-
             const result = await this.updateShopifyCartItem(variantId, newQuantity);
             if (result) {
-                item.quantity = newQuantity;
-                this.save();
+                await this.load(); // Recargar el carrito después de actualizar
                 return true;
             }
             return false;
@@ -187,8 +197,7 @@ const CartState = {
         try {
             const result = await this.updateShopifyCartItem(variantId, 0);
             if (result) {
-                this.items = this.items.filter(item => item.variantId !== variantId);
-                this.save();
+                await this.load(); // Recargar el carrito después de eliminar
                 return true;
             }
             return false;
@@ -199,43 +208,63 @@ const CartState = {
         }
     },
 
-    updateCheckoutButton() {
-        const checkoutButton = document.getElementById('checkout-button');
-        const totalItems = this.items.reduce((sum, item) => sum + item.quantity, 0);
-    
-        if (checkoutButton) {
-            checkoutButton.disabled = totalItems === 0;
-            checkoutButton.href = totalItems === 0 ? "#" : "/checkout";
-        }
-    },
-    
     openCart() {
         const cartSidebar = document.getElementById('cart-sidebar');
         const cartOverlay = document.getElementById('cart-overlay');
-        if (cartSidebar) cartSidebar.classList.add('open');
-        if (cartOverlay) cartOverlay.classList.add('show');
+        
+        if (cartSidebar) {
+            cartSidebar.classList.add('open');
+            console.log('Abriendo carrito'); // Para debugging
+        }
+        
+        if (cartOverlay) {
+            cartOverlay.classList.add('show');
+        }
+        
+        // Recargar el contenido del carrito al abrirlo
+        this.load();
     },
     
     closeCart() {
         const cartSidebar = document.getElementById('cart-sidebar');
         const cartOverlay = document.getElementById('cart-overlay');
-        if (cartSidebar) cartSidebar.classList.remove('open');
-        if (cartOverlay) cartOverlay.classList.remove('show');
+        
+        if (cartSidebar) {
+            cartSidebar.classList.remove('open');
+            console.log('Cerrando carrito'); // Para debugging
+        }
+        
+        if (cartOverlay) {
+            cartOverlay.classList.remove('show');
+        }
     },
 
     initializeCart() {
         this.load();
 
-        // Event Listeners para el carrito
-        document.addEventListener('click', (e) => {
-            const target = e.target;
-            
-            if (target.matches('#cart-icon, #cart-count') || target.closest('#cart-icon-container')) {
+        // Mejorar los event listeners para el carrito
+        const cartIconContainer = document.getElementById('cart-icon-container');
+        const cartOverlay = document.getElementById('cart-overlay');
+        const closeCartBtn = document.getElementById('close-cart');
+
+        if (cartIconContainer) {
+            cartIconContainer.addEventListener('click', () => {
+                console.log('Click en icono del carrito'); // Para debugging
                 this.openCart();
-            } else if (target.matches('#close-cart, #cart-overlay')) {
+            });
+        }
+
+        if (closeCartBtn) {
+            closeCartBtn.addEventListener('click', () => {
                 this.closeCart();
-            }
-        });
+            });
+        }
+
+        if (cartOverlay) {
+            cartOverlay.addEventListener('click', () => {
+                this.closeCart();
+            });
+        }
 
         this.updateCheckoutButton();
     }
