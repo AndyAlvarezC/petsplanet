@@ -116,11 +116,11 @@ const CartState = {
             }
             return false;
         } catch (error) {
-            console.error('Error al agregar al carrito:', error);
-            alert('Hubo un error al agregar el producto al carrito');
-            return false;
+            console.error('Error en addItem:', error);
+            return false; // Retornar false si hay algún error
         }
     },
+    
     
     async addToShopifyCart(variantId, quantity) {
         try {

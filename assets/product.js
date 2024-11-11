@@ -160,6 +160,7 @@ async function addToCart(variantId, quantity) {
         if (response.ok) {
             const cart = await response.json();
             console.log('Producto añadido al carrito:', cart);
+            
             // Mostrar mensaje de éxito
             const cartModal = document.querySelector('.cart-modal');
             if (cartModal) {
@@ -168,17 +169,18 @@ async function addToCart(variantId, quantity) {
                     cartModal.style.display = 'none';
                 }, 2000);
             }
-            
+
             // Abre el carrito si es necesario
             CartState.openCart();
         } else {
             throw new Error('Error al agregar el producto al carrito');
         }
     } catch (error) {
-        console.error('Error al agregar al carrito:', error);
-        alert('Hubo un error al agregar el producto al carrito');
+        console.error('Error en addToCart:', error);
+        alert('Ocurrió un problema al intentar agregar el producto al carrito.');
     }
 }
+
 
 // Nueva función para cerrar el modal del carrito
 function closeCart() {
@@ -188,10 +190,7 @@ function closeCart() {
     }
 }
 
-// Evento del botón de añadir al carrito
 btnCarrito.addEventListener("click", () => {
-    console.log('Estado actual:', { selectedColor, selectedSize });
-    
     if (!selectedColor || !selectedSize || 
         selectedColor === null || selectedSize === null || 
         selectedSize === "Selecciona una talla") {
@@ -205,8 +204,11 @@ btnCarrito.addEventListener("click", () => {
         return;
     }
 
+    // Aquí ya estás seguro de que tienes un variantId válido, entonces puedes llamar a la función
     addToCart(variantId, cantidad);
 });
+
+
 
 // Inicializar el producto cuando se carga la página
 document.addEventListener('DOMContentLoaded', () => {

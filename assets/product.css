@@ -14,7 +14,7 @@
 .producto-contenedor {
     display: flex;
     max-width: 1200px;
-    margin: 9.9rem auto;
+    margin: 9.9rem 0;
     gap: 2rem;
 }
 
