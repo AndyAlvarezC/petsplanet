@@ -1,145 +1,80 @@
+// Declaraciones de elementos
+const cantidadDisplay = document.getElementById("cantidad");
 const btnMenor = document.getElementById("btn-menor");
 const btnMayor = document.getElementById("btn-mayor");
-const cantidadDisplay = document.getElementById("cantidad");
 const btnCarrito = document.querySelector(".btn-carrito");
 const colorSeleccionado = document.getElementById("color-seleccionado");
 const tallaSeleccionada = document.getElementById("talla-seleccionada");
+const miniaturas = document.querySelectorAll('.miniatura');
+const imagenPrincipal = document.querySelector('.imagen-principal img');
+const opcionesColores = document.querySelectorAll(".opcion-color");
+const opcionesTallas = document.querySelectorAll(".talla");
 
 let cantidad = 1;
 let selectedColor = null;
 let selectedSize = null;
 let productVariants = [];
 
-function getProductVariants() {
-    const productJson = document.getElementById('ProductJson-product-template');
-    if (!productJson) {
-        console.error('No se encuentra el elemento ProductJson-product-template');
-        return null;
-    }
-    return JSON.parse(productJson.textContent);
-}
+// Inicializar producto
+document.addEventListener('DOMContentLoaded', initializeProduct);
 
 function initializeProduct() {
-    try {
-        const product = getProductVariants();
-        if (product) {
-            productVariants = product.variants;
-            console.log('Variantes disponibles:', productVariants);
-            updatePrice(product.price, product.compare_at_price);
-        }
-    } catch (error) {
-        console.error('Error al inicializar el producto:', error);
+    const productJson = document.getElementById('ProductJson-product-template');
+    if (productJson) {
+        const product = JSON.parse(productJson.textContent);
+        productVariants = product.variants;
+        updatePrice(product.price, product.compare_at_price);
+    } else {
+        console.error('No se encuentra el elemento ProductJson-product-template');
     }
 }
 
+// Actualizar precio
 function updatePrice(price, comparePrice) {
     const priceElement = document.querySelector('.precio');
-    if (comparePrice && comparePrice > price) {
-        priceElement.innerHTML = `
-            <span class="precio-descuento">${formatMoney(price)}</span>
-            <span class="precio-original">${formatMoney(comparePrice)}</span>
-        `;
-    } else {
-        priceElement.innerHTML = `<span class="precio-descuento">${formatMoney(price)}</span>`;
-    }
+    priceElement.innerHTML = comparePrice && comparePrice > price ?
+        `<span class="precio-descuento">${formatMoney(price)}</span><span class="precio-original">${formatMoney(comparePrice)}</span>` :
+        `<span class="precio-descuento">${formatMoney(price)}</span>`;
 }
 
+// Formatear dinero
 function formatMoney(cents) {
-    return (cents/100).toLocaleString('es-ES', {
-        style: 'currency',
-        currency: 'EUR'
-    });
+    return (cents / 100).toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
 }
 
-function actualizarCantidad() {
-    cantidadDisplay.textContent = cantidad;
-}
-
-// Eventos para los botones de cantidad
-btnMenor.addEventListener("click", () => {
-    if (cantidad > 1) {
-        cantidad--;
-        actualizarCantidad();
-    }
-});
-
-btnMayor.addEventListener("click", () => {
-    cantidad++;
-    actualizarCantidad();
-});
+// Actualizar cantidad
+btnMenor.addEventListener("click", () => { if (cantidad > 1) cantidad--; actualizarCantidad(); });
+btnMayor.addEventListener("click", () => { cantidad++; actualizarCantidad(); });
+function actualizarCantidad() { cantidadDisplay.textContent = cantidad; }
 
 // Manejo de miniaturas
-const miniaturas = document.querySelectorAll('.miniatura');
-const imagenPrincipal = document.querySelector('.imagen-principal img');
+miniaturas.forEach(miniatura => miniatura.addEventListener('click', (e) => { imagenPrincipal.src = e.target.src; }));
 
-miniaturas.forEach(miniatura => {
-    miniatura.addEventListener('click', (event) => {
-        imagenPrincipal.src = event.target.src;
+// Selección genérica para color/talla
+function handleSelection(elements, displayElement, selectedAttr) {
+    elements.forEach(element => {
+        element.addEventListener("click", () => {
+            elements.forEach(el => el.classList.remove("seleccionado"));
+            element.classList.add("seleccionado");
+            displayElement.textContent = element.getAttribute(selectedAttr);
+            selectedAttr === "data-color" ? selectedColor = element.getAttribute("data-color") : selectedSize = element.getAttribute("data-talla");
+            console.log(selectedAttr === "data-color" ? 'Color seleccionado:' : 'Talla seleccionada:', displayElement.textContent);
+        });
     });
-});
+}
 
-// Manejo de selección de color
-const opcionesColores = document.querySelectorAll(".opcion-color");
+handleSelection(opcionesColores, colorSeleccionado, "data-color");
+handleSelection(opcionesTallas, tallaSeleccionada, "data-talla");
 
-opcionesColores.forEach(opcion => {
-    opcion.addEventListener("click", () => {
-        // Eliminar selección previa
-        opcionesColores.forEach(color => color.classList.remove("seleccionado"));
-        // Agregar nueva selección
-        opcion.classList.add("seleccionado");
-        selectedColor = opcion.getAttribute("data-color");
-        colorSeleccionado.textContent = selectedColor;
-        console.log('Color seleccionado:', selectedColor);
-    });
-});
-
-// Manejo de selección de talla
-const opcionesTallas = document.querySelectorAll(".talla");
-
-opcionesTallas.forEach(opcion => {
-    opcion.addEventListener("click", () => {
-        // Eliminar selección previa
-        opcionesTallas.forEach(talla => talla.classList.remove("talla-seleccionada"));
-        // Agregar nueva selección
-        opcion.classList.add("talla-seleccionada");
-        selectedSize = opcion.getAttribute("data-talla");
-        tallaSeleccionada.textContent = selectedSize;
-        console.log('Talla seleccionada:', selectedSize);
-    });
-});
-
-// Función para encontrar la variante
+// Buscar variantId
 function findVariantId(color, size) {
-    if (!productVariants || productVariants.length === 0) {
-        console.error('No hay variantes disponibles');
-        return null;
-    }
-
-    const normalizedColor = color.toLowerCase().trim();
-    const normalizedSize = size.toLowerCase().trim();
-
-    console.log('Buscando variante:', {
-        color: normalizedColor,
-        size: normalizedSize,
-        selectedColor,
-        selectedSize
-    });
-
-    const variant = productVariants.find(v => {
-        const variantColor = (v.option1 || '').toLowerCase().trim();
-        const variantSize = (v.option2 || '').toLowerCase().trim();
-        
-        return variantColor === normalizedColor && 
-            variantSize === normalizedSize;
-    });
-
+    const variant = productVariants.find(v => (v.option1 || '').toLowerCase().trim() === color.toLowerCase() && 
+                                                (v.option2 || '').toLowerCase().trim() === size.toLowerCase());
     return variant ? variant.id : null;
 }
 
-// Nueva función para añadir al carrito utilizando la API de Shopify
 async function addToCart(variantId, quantity) {
     try {
-        // Verificar si el variantId es válido
         if (!variantId) {
             throw new Error('La variante seleccionada no es válida');
         }
@@ -161,7 +96,7 @@ async function addToCart(variantId, quantity) {
             const cart = await response.json();
             console.log('Producto añadido al carrito:', cart);
             
-            // Mostrar mensaje de éxito
+            // Mostrar el modal de éxito
             const cartModal = document.querySelector('.cart-modal');
             if (cartModal) {
                 cartModal.style.display = 'block';
@@ -170,8 +105,12 @@ async function addToCart(variantId, quantity) {
                 }, 2000);
             }
 
-            // Abre el carrito si es necesario
-            CartState.openCart();
+            // Abre el carrito automáticamente
+            if (typeof CartState !== 'undefined' && CartState.openCart) {
+                CartState.openCart();
+            } else {
+                console.error("CartState.openCart no está definido.");
+            }
         } else {
             throw new Error('Error al agregar el producto al carrito');
         }
@@ -181,36 +120,16 @@ async function addToCart(variantId, quantity) {
     }
 }
 
+// Cerrar el modal del carrito
+document.querySelector('.cart-modal button').addEventListener("click", closeCart);
+function closeCart() { document.querySelector('.cart-modal').style.display = 'none'; }
 
-// Nueva función para cerrar el modal del carrito
-function closeCart() {
-    const cartModal = document.querySelector('.cart-modal');
-    if (cartModal) {
-        cartModal.style.display = 'none';
-    }
-}
-
+// Evento al añadir al carrito
 btnCarrito.addEventListener("click", () => {
-    if (!selectedColor || !selectedSize || 
-        selectedColor === null || selectedSize === null || 
-        selectedSize === "Selecciona una talla") {
+    if (!selectedColor || !selectedSize) {
         alert("Por favor, selecciona un color y una talla");
         return;
     }
-
     const variantId = findVariantId(selectedColor, selectedSize);
-    if (!variantId) {
-        alert("La combinación seleccionada no está disponible");
-        return;
-    }
-
-    // Aquí ya estás seguro de que tienes un variantId válido, entonces puedes llamar a la función
-    addToCart(variantId, cantidad);
-});
-
-
-
-// Inicializar el producto cuando se carga la página
-document.addEventListener('DOMContentLoaded', () => {
-    initializeProduct();
+    variantId ? addToCart(variantId, cantidad) : alert("La combinación seleccionada no está disponible");
 });
