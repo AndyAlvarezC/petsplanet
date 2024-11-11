@@ -9,14 +9,19 @@ const thumbnails = document.querySelectorAll('.thumbnail');
 const mainImage = document.querySelector('.main-image img');
 const colorOptions = document.querySelectorAll(".color-option");
 const sizeOptions = document.querySelectorAll(".size");
+const discountPriceElement = document.getElementById("discount-price");
 
 let quantity = 1;
 let selectedColor = null;
 let selectedSize = null;
 let productVariants = [];
+let currentVariant = null;
 
 // Initialize product
-document.addEventListener('DOMContentLoaded', initializeProduct);
+document.addEventListener('DOMContentLoaded', () => {
+    initializeProduct();
+    initializeSelections();
+});
 
 function initializeProduct() {
     const productJson = document.getElementById('ProductJson-product-template');
@@ -29,12 +34,88 @@ function initializeProduct() {
     }
 }
 
-// Update price
+// Initialize selections and thumbnails
+function initializeSelections() {
+    // Handle color selection and image updates
+    colorOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            // Remove selected class from all options
+            colorOptions.forEach(opt => opt.classList.remove('selected'));
+            // Add selected class to clicked option
+            this.classList.add('selected');
+            
+            // Update selected color
+            selectedColor = this.getAttribute('data-color');
+            selectedColorDisplay.textContent = selectedColor;
+            
+            // Update main image
+            const newImageUrl = this.getAttribute('data-image');
+            if (newImageUrl) {
+                mainImage.src = newImageUrl;
+            }
+            
+            updateVariantPrice();
+            console.log('Color selected:', selectedColor);
+        });
+    });
+
+    // Handle size selection
+    sizeOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            // Remove selected class from all options
+            sizeOptions.forEach(opt => opt.classList.remove('selected'));
+            // Add selected class to clicked option
+            this.classList.add('selected');
+            
+            // Update selected size
+            selectedSize = this.getAttribute('data-size');
+            selectedSizeDisplay.textContent = selectedSize;
+            
+            updateVariantPrice();
+            console.log('Size selected:', selectedSize);
+        });
+    });
+
+    // Handle thumbnails with active state
+    thumbnails.forEach(thumbnail => {
+        thumbnail.addEventListener('click', (e) => {
+            thumbnails.forEach(thumb => thumb.classList.remove('active'));
+            e.target.classList.add('active');
+            mainImage.src = e.target.src;
+        });
+    });
+}
+
+// Find current variant and update price
+function updateVariantPrice() {
+    if (selectedColor && selectedSize) {
+        const variant = findVariant(selectedColor, selectedSize);
+        if (variant) {
+            currentVariant = variant;
+            updatePrice(variant.price, variant.compare_at_price);
+        }
+    }
+}
+
+// Find variant based on color and size
+function findVariant(color, size) {
+    return productVariants.find(v => 
+        (v.option1 || '').toLowerCase().trim() === color.toLowerCase() &&
+        (v.option2 || '').toLowerCase().trim() === size.toLowerCase()
+    );
+}
+
+// Update price display
 function updatePrice(price, comparePrice) {
     const priceElement = document.querySelector('.price');
-    priceElement.innerHTML = comparePrice && comparePrice > price ?
-        `<span class="discount-price">${formatMoney(price)}</span><span class="original-price">${formatMoney(comparePrice)}</span>` :
-        `<span class="discount-price">${formatMoney(price)}</span>`;
+    if (comparePrice && comparePrice > price) {
+        priceElement.innerHTML = `
+            <span class="discount-price">${formatMoney(price)}</span>
+            <span class="original-price">${formatMoney(comparePrice)}</span>
+        `;
+    } else {
+        priceElement.innerHTML = `<span class="discount-price">${formatMoney(price)}</span>`;
+    }
 }
 
 // Format money (EUR)
@@ -46,32 +127,8 @@ function formatMoney(cents) {
 btnDecrease.addEventListener("click", () => { if (quantity > 1) quantity--; updateQuantity(); });
 btnIncrease.addEventListener("click", () => { quantity++; updateQuantity(); });
 
-function updateQuantity() { quantityDisplay.textContent = quantity; }
-
-// Handle thumbnails
-thumbnails.forEach(thumbnail => thumbnail.addEventListener('click', (e) => { mainImage.src = e.target.src; }));
-
-// Generic selection handler for color/size
-function handleSelection(elements, displayElement, selectedAttr) {
-    elements.forEach(element => {
-        element.addEventListener("click", () => {
-            elements.forEach(el => el.classList.remove("selected"));
-            element.classList.add("selected");
-            displayElement.textContent = element.getAttribute(selectedAttr);
-            selectedAttr === "data-color" ? selectedColor = element.getAttribute("data-color") : selectedSize = element.getAttribute("data-size");
-            console.log(selectedAttr === "data-color" ? 'Color selected:' : 'Size selected:', displayElement.textContent);
-        });
-    });
-}
-
-handleSelection(colorOptions, selectedColorDisplay, "data-color");
-handleSelection(sizeOptions, selectedSizeDisplay, "data-size");
-
-// Find variant ID
-function findVariantId(color, size) {
-    const variant = productVariants.find(v => (v.option1 || '').toLowerCase().trim() === color.toLowerCase() &&
-                                                (v.option2 || '').toLowerCase().trim() === size.toLowerCase());
-    return variant ? variant.id : null;
+function updateQuantity() { 
+    quantityDisplay.textContent = quantity; 
 }
 
 async function addToCart(variantId, quantity) {
@@ -123,7 +180,9 @@ async function addToCart(variantId, quantity) {
 
 // Close the cart modal
 document.querySelector('.cart-modal button').addEventListener("click", closeCart);
-function closeCart() { document.querySelector('.cart-modal').style.display = 'none'; }
+function closeCart() { 
+    document.querySelector('.cart-modal').style.display = 'none'; 
+}
 
 // Event when adding to the cart
 btnCart.addEventListener("click", () => {
@@ -131,6 +190,11 @@ btnCart.addEventListener("click", () => {
         alert("Please select a color and a size");
         return;
     }
-    const variantId = findVariantId(selectedColor, selectedSize);
-    variantId ? addToCart(variantId, quantity) : alert("The selected combination is not available");
+    
+    if (!currentVariant) {
+        alert("The selected combination is not available");
+        return;
+    }
+    
+    addToCart(currentVariant.id, quantity);
 });
