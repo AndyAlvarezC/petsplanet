@@ -5,7 +5,7 @@
 
 <div class="cart-sidebar" id="cart-sidebar">
     <div class="cart-header">
-        <h2>Tu carrito</h2>
+        <h2>Your Cart</h2>
         <button class="close-cart" id="close-cart">
             <i class="fas fa-times"></i>
         </button>
@@ -28,9 +28,7 @@
                         <button class="btn-quantity" data-variant-id="{{ item.variant_id }}" data-action="increase">+</button>
                     </div>
                 </div>
-                <button class="remove-item" data-variant-id="{{ item.variant_id }}">
-                    <i class="fas fa-trash"></i>
-                </button>
+                <i class="fas fa-trash remove-item" data-variant-id="{{ item.variant_id }}"></i>
             </div>
         {% endfor %}
     </div>
@@ -40,7 +38,7 @@
             <span id="cart-total">{{ cart.total_price | money }}</span>
         </div>
         <a href="/checkout" class="btn-checkout" id="checkout-button" {% if cart.item_count == 0 %}disabled{% endif %}>
-            Finalizar compra
+            Checkout
         </a>
     </div>
 </div>

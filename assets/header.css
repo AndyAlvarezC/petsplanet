@@ -1,15 +1,25 @@
+:root {
+    --primary-color: #C19A6B;
+    --secondary-color: #f5f5f5;
+    --hover-color: #B87333;
+    --font-color: var(--secondary-color);
+    --dark-font-color: #000;
+    --transition-time: 0.5s ease;
+    --dark-color: #000; /* Added for dark color consistency */
+}
+
 header {
+    position: fixed;
     top: 0;
     left: 0;
+    width: 100%;
+    z-index: 1000;
+    padding: 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem;
     background-color: var(--primary-color);
     color: var(--secondary-color);
-    position: fixed;
-    width: 100%;
-    z-index: 1000;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
     font-size: 1.3rem;
     font-weight: 700;
@@ -23,7 +33,7 @@ header {
 .logo img {
     width: 15%;
     height: auto;
-    transition: transform 0.5s ease;
+    transition: transform var(--transition-time);
 }
 
 .logo img:hover {
@@ -39,9 +49,9 @@ nav {
 
 nav ul {
     display: flex;
-    justify-content: center;
-    list-style-type: none;
     padding: 0;
+    list-style-type: none;
+    justify-content: center;
 }
 
 nav ul li {
@@ -53,7 +63,7 @@ nav ul li a {
     text-decoration: none;
     position: relative;
     padding-bottom: 0.2rem;
-    transition: color 0.3s ease;
+    transition: color var(--transition-time);
 }
 
 nav ul li a::after {
@@ -64,11 +74,11 @@ nav ul li a::after {
     width: 0;
     height: 2px;
     background-color: var(--secondary-color);
-    transition: width 0.5s ease;
+    transition: width var(--transition-time);
 }
 
 nav ul li a:hover {
-    color: var(--dark-color);
+    color: var(--font-color);
 }
 
 nav ul li a:hover::after {
@@ -86,12 +96,12 @@ nav ul li a:hover::after {
 
 .header-icons i,
 .header-icons select {
-    color: var(--dark-color);
+    color: var(--secondary-color);
     background: none;
     border: none;
     font-size: 1.2rem;
     cursor: pointer;
-    transition: all 0.5s ease;
+    transition: color var(--transition-time);
 }
 
 .header-icons i:hover,
@@ -99,27 +109,9 @@ nav ul li a:hover::after {
     color: var(--dark-color);
 }
 
-.selector-idioma,
-.selector-divisa {
-    padding: 0.3rem;
-    border-radius: 0.3rem;
-    background-color: var(--primary-color);
-    color: var(--secondary-color);
-}
-
-.selector-lenguaje:hover,
-.selector-divisa:hover {
-    color: var(--secondary-color);
-    cursor: pointer;
-}
-
 .cart-icon-container {
     position: relative;
     cursor: pointer;
-}
-
-span {
-    color: #000;
 }
 
 .language-switcher,
@@ -131,21 +123,21 @@ span {
 .lang-btn,
 .currency-btn {
     padding: 5px 10px;
-    border: 1px solid #ddd;
     background: white;
     cursor: pointer;
+    border: none;
     border-radius: 4px;
-    transition: all 0.3s ease;
+    transition: background-color var(--transition-time);
 }
 
 .lang-btn:hover,
 .currency-btn:hover {
-    background: #f5f5f5;
+    background-color: var(--dark-font-color);
+    color: var(--font-color);
 }
 
 .lang-btn.active,
 .currency-btn.active {
-    background: #333;
-    color: white;
-    border-color: #333;
+    background-color: var(--hover-color);
+    color: var(--font-color);
 }

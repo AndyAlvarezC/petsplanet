@@ -1,21 +1,21 @@
-// Declaraciones de elementos
-const cantidadDisplay = document.getElementById("cantidad");
-const btnMenor = document.getElementById("btn-menor");
-const btnMayor = document.getElementById("btn-mayor");
-const btnCarrito = document.querySelector(".btn-carrito");
-const colorSeleccionado = document.getElementById("color-seleccionado");
-const tallaSeleccionada = document.getElementById("talla-seleccionada");
-const miniaturas = document.querySelectorAll('.miniatura');
-const imagenPrincipal = document.querySelector('.imagen-principal img');
-const opcionesColores = document.querySelectorAll(".opcion-color");
-const opcionesTallas = document.querySelectorAll(".talla");
+// Element declarations
+const quantityDisplay = document.getElementById("quantity");
+const btnDecrease = document.getElementById("btn-decrease");
+const btnIncrease = document.getElementById("btn-increase");
+const btnCart = document.querySelector(".btn-cart");
+const selectedColorDisplay = document.getElementById("selected-color");
+const selectedSizeDisplay = document.getElementById("selected-size");
+const thumbnails = document.querySelectorAll('.thumbnail');
+const mainImage = document.querySelector('.main-image img');
+const colorOptions = document.querySelectorAll(".color-option");
+const sizeOptions = document.querySelectorAll(".size");
 
-let cantidad = 1;
+let quantity = 1;
 let selectedColor = null;
 let selectedSize = null;
 let productVariants = [];
 
-// Inicializar producto
+// Initialize product
 document.addEventListener('DOMContentLoaded', initializeProduct);
 
 function initializeProduct() {
@@ -25,50 +25,51 @@ function initializeProduct() {
         productVariants = product.variants;
         updatePrice(product.price, product.compare_at_price);
     } else {
-        console.error('No se encuentra el elemento ProductJson-product-template');
+        console.error('ProductJson-product-template element not found');
     }
 }
 
-// Actualizar precio
+// Update price
 function updatePrice(price, comparePrice) {
-    const priceElement = document.querySelector('.precio');
+    const priceElement = document.querySelector('.price');
     priceElement.innerHTML = comparePrice && comparePrice > price ?
-        `<span class="precio-descuento">${formatMoney(price)}</span><span class="precio-original">${formatMoney(comparePrice)}</span>` :
-        `<span class="precio-descuento">${formatMoney(price)}</span>`;
+        `<span class="discount-price">${formatMoney(price)}</span><span class="original-price">${formatMoney(comparePrice)}</span>` :
+        `<span class="discount-price">${formatMoney(price)}</span>`;
 }
 
-// Formatear dinero
+// Format money (EUR)
 function formatMoney(cents) {
     return (cents / 100).toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
 }
 
-// Actualizar cantidad
-btnMenor.addEventListener("click", () => { if (cantidad > 1) cantidad--; actualizarCantidad(); });
-btnMayor.addEventListener("click", () => { cantidad++; actualizarCantidad(); });
-function actualizarCantidad() { cantidadDisplay.textContent = cantidad; }
+// Update quantity
+btnDecrease.addEventListener("click", () => { if (quantity > 1) quantity--; updateQuantity(); });
+btnIncrease.addEventListener("click", () => { quantity++; updateQuantity(); });
 
-// Manejo de miniaturas
-miniaturas.forEach(miniatura => miniatura.addEventListener('click', (e) => { imagenPrincipal.src = e.target.src; }));
+function updateQuantity() { quantityDisplay.textContent = quantity; }
 
-// Selección genérica para color/talla
+// Handle thumbnails
+thumbnails.forEach(thumbnail => thumbnail.addEventListener('click', (e) => { mainImage.src = e.target.src; }));
+
+// Generic selection handler for color/size
 function handleSelection(elements, displayElement, selectedAttr) {
     elements.forEach(element => {
         element.addEventListener("click", () => {
-            elements.forEach(el => el.classList.remove("seleccionado"));
-            element.classList.add("seleccionado");
+            elements.forEach(el => el.classList.remove("selected"));
+            element.classList.add("selected");
             displayElement.textContent = element.getAttribute(selectedAttr);
-            selectedAttr === "data-color" ? selectedColor = element.getAttribute("data-color") : selectedSize = element.getAttribute("data-talla");
-            console.log(selectedAttr === "data-color" ? 'Color seleccionado:' : 'Talla seleccionada:', displayElement.textContent);
+            selectedAttr === "data-color" ? selectedColor = element.getAttribute("data-color") : selectedSize = element.getAttribute("data-size");
+            console.log(selectedAttr === "data-color" ? 'Color selected:' : 'Size selected:', displayElement.textContent);
         });
     });
 }
 
-handleSelection(opcionesColores, colorSeleccionado, "data-color");
-handleSelection(opcionesTallas, tallaSeleccionada, "data-talla");
+handleSelection(colorOptions, selectedColorDisplay, "data-color");
+handleSelection(sizeOptions, selectedSizeDisplay, "data-size");
 
-// Buscar variantId
+// Find variant ID
 function findVariantId(color, size) {
-    const variant = productVariants.find(v => (v.option1 || '').toLowerCase().trim() === color.toLowerCase() && 
+    const variant = productVariants.find(v => (v.option1 || '').toLowerCase().trim() === color.toLowerCase() &&
                                                 (v.option2 || '').toLowerCase().trim() === size.toLowerCase());
     return variant ? variant.id : null;
 }
@@ -76,7 +77,7 @@ function findVariantId(color, size) {
 async function addToCart(variantId, quantity) {
     try {
         if (!variantId) {
-            throw new Error('La variante seleccionada no es válida');
+            throw new Error('The selected variant is not valid');
         }
 
         const response = await fetch('/cart/add.js', {
@@ -94,9 +95,9 @@ async function addToCart(variantId, quantity) {
 
         if (response.ok) {
             const cart = await response.json();
-            console.log('Producto añadido al carrito:', cart);
+            console.log('Product added to cart:', cart);
             
-            // Mostrar el modal de éxito
+            // Show success modal
             const cartModal = document.querySelector('.cart-modal');
             if (cartModal) {
                 cartModal.style.display = 'block';
@@ -105,31 +106,31 @@ async function addToCart(variantId, quantity) {
                 }, 2000);
             }
 
-            // Abre el carrito automáticamente
+            // Automatically open the cart
             if (typeof CartState !== 'undefined' && CartState.openCart) {
                 CartState.openCart();
             } else {
-                console.error("CartState.openCart no está definido.");
+                console.error("CartState.openCart is not defined.");
             }
         } else {
-            throw new Error('Error al agregar el producto al carrito');
+            throw new Error('Error adding product to cart');
         }
     } catch (error) {
-        console.error('Error en addToCart:', error);
-        alert('Ocurrió un problema al intentar agregar el producto al carrito.');
+        console.error('Error in addToCart:', error);
+        alert('There was a problem adding the product to the cart.');
     }
 }
 
-// Cerrar el modal del carrito
+// Close the cart modal
 document.querySelector('.cart-modal button').addEventListener("click", closeCart);
 function closeCart() { document.querySelector('.cart-modal').style.display = 'none'; }
 
-// Evento al añadir al carrito
-btnCarrito.addEventListener("click", () => {
+// Event when adding to the cart
+btnCart.addEventListener("click", () => {
     if (!selectedColor || !selectedSize) {
-        alert("Por favor, selecciona un color y una talla");
+        alert("Please select a color and a size");
         return;
     }
     const variantId = findVariantId(selectedColor, selectedSize);
-    variantId ? addToCart(variantId, cantidad) : alert("La combinación seleccionada no está disponible");
+    variantId ? addToCart(variantId, quantity) : alert("The selected combination is not available");
 });

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,91 +10,91 @@
     <link rel="stylesheet" href="{{ 'cart.css' | asset_url }}">
 </head>
 <body>
-    <div class="producto-contenedor">
-        <div class="galeria">
+    <div class="product-container">
+        <div class="gallery">
             {% for image in product.images %}
-                <img src="{{ image | img_url: 'medium' }}" alt="{{ image.alt }}" class="miniatura" data-color="{{ image.alt }}">
+                <img src="{{ image | img_url: 'medium' }}" alt="{{ image.alt }}" class="thumbnail" data-color="{{ image.alt }}">
             {% endfor %}
         </div>
 
-        <div class="imagen-principal">
-            <img src="{{ product.featured_image | img_url: 'large' }}" alt="Producto principal" id="imagen-principal">
+        <div class="main-image">
+            <img src="{{ product.featured_image | img_url: 'large' }}" alt="Main Product Image" id="main-image">
         </div>
 
-        <div class="info-producto">
+        <div class="product-info">
             <h2>{{ product.title }}</h2>
-            <h3 class="precio">
-                <span class="precio-descuento" id="precio-descuento">{{ product.price | money }}</span>
+            <h3 class="price">
+                <span class="discount-price" id="discount-price">{{ product.price | money }}</span>
                 {% if product.compare_at_price > product.price %}
-                    <span class="precio-original">{{ product.compare_at_price | money }}</span>
+                    <span class="original-price">{{ product.compare_at_price | money }}</span>
                 {% endif %}
             </h3>
 
             <p>{{ product.description }}</p>
-            <div class="resenas">
-                <div class="puntuacion">
-                    <span class="estrellas">
+            <div class="reviews">
+                <div class="rating">
+                    <span class="stars">
                         {% for i in (1..5) %}
                             <i class="fas fa-star{% if i <= product.rating %}-half-alt{% endif %}"></i>
                         {% endfor %}
                     </span>
-                    <span class="puntuacion-numero">{{ product.rating }}</span>
+                    <span class="rating-number">{{ product.rating }}</span>
                 </div>
-                <div class="detalle-resenas">
-                    <span class="num-resenas">{{ product.reviews_count }} valoraciones</span>
+                <div class="review-details">
+                    <span class="num-reviews">{{ product.reviews_count }} reviews</span>
                     <span>|</span>
                 </div>
-                <span class="productos-vendidos">{{ product.sold_count }} vendidos</span>
+                <span class="products-sold">{{ product.sold_count }} sold</span>
             </div>
 
             <hr>
 
-            <div class="colores">
-                <h3>Color: <span id="color-seleccionado">{{ product.options[0].name }}</span></h3>
-                <div class="opciones-colores">
+            <div class="colors">
+                <h3>Color: <span id="selected-color">{{ product.options[0].name }}</span></h3>
+                <div class="color-options">
                     {% assign unique_colors = "" %}
                     {% for variant in product.variants %}
                         {% unless unique_colors contains variant.option1 %}
-                            <div class="opcion-color" data-color="{{ variant.option1 }}" data-image="{{ variant.image.src | img_url: 'large' }}" style="background-image: url('{{ variant.image.src | img_url: 'small' }}')" onclick="cambiarColor('{{ variant.option1 }}', '{{ variant.image.src }}', {{ variant.price | money_without_currency }})"></div>
+                            <div class="color-option" data-color="{{ variant.option1 }}" data-image="{{ variant.image.src | img_url: 'large' }}" style="background-image: url('{{ variant.image.src | img_url: 'small' }}')" onclick="changeColor('{{ variant.option1 }}', '{{ variant.image.src }}', {{ variant.price | money_without_currency }})"></div>
                             {% assign unique_colors = unique_colors | append: variant.option1 | append: "," %}
                         {% endunless %}
                     {% endfor %}
                 </div>
             </div>
 
-            <div class="tallas">
-                <h3>Talla: <span id="talla-seleccionada">Selecciona una talla</span></h3>
-                <div class="opciones-tallas">
+            <div class="sizes">
+                <h3>Size: <span id="selected-size">Select a size</span></h3>
+                <div class="size-options">
                     {% assign unique_sizes = "" %}
                     {% for variant in product.variants %}
                         {% unless unique_sizes contains variant.option2 %}
-                            <button class="talla" data-talla="{{ variant.option2 }}" onclick="cambiarTalla('{{ variant.option2 }}', {{ variant.price | money_without_currency }})">{{ variant.option2 }}</button>
+                            <button class="size" data-size="{{ variant.option2 }}" onclick="changeSize('{{ variant.option2 }}', {{ variant.price | money_without_currency }})">{{ variant.option2 }}</button>
                             {% assign unique_sizes = unique_sizes | append: variant.option2 | append: "," %}
                         {% endunless %}
                     {% endfor %}
                 </div>
             </div>
 
-            <div class="cantidad">
-                <h3>Cantidad</h3>
-                <div class="contador">
-                    <button class="btn-cantidad" id="btn-menor">-</button>
-                    <span id="cantidad" class="cantidad-numero">1</span>
-                    <button class="btn-cantidad" id="btn-mayor">+</button>
+            <div class="quantity">
+                <h3>Quantity</h3>
+                <div class="counter">
+                    <button class="btn-quantity" id="btn-decrease">-</button>
+                    <span id="quantity" class="quantity-number">1</span>
+                    <button class="btn-quantity" id="btn-increase">+</button>
                 </div>
             </div>
 
-            <div class="acciones">
-                <button class="btn-carrito">Añadir a la cesta</button>
+            <div class="actions">
+                <button class="btn-cart">Add to cart</button>
             </div>
         </div>
         <div data-rapi-id="rapi_62669dc1802270"></div>
     </div>
 
     <div class="cart-modal" style="display:none;">
-        <h2>Carrito de compras</h2>
-        <p>Producto añadido al carrito</p>
-        <button onclick="closeCart()">Cerrar Carrito</button>
+        <h2>Shopping Cart</h2>
+        <p>Product added to cart</p>
+        <button onclick="closeCart()">Close Cart</button>
     </div>
 
     <div class='jdgm-carousel-wrapper'> 

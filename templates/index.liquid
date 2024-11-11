@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,35 +10,35 @@
     <link rel="stylesheet" href="{{ 'cart.css' | asset_url }}">
 </head>
 <body>
-    <section id="inicio">
+    <section id="home">
         <div>
-            <h1>Bienvenidos a {{ shop.name }}</h1>
-            <p>La mejor tienda de animales</p>
-            <a href="#productos" class="btn">Ver productos</a>        
+            <h1>Welcome to {{ shop.name }}</h1>
+            <p>The best pet store</p>
+            <a href="#products" class="btn">View products</a>        
         </div>
     </section>
     
-    <section id="productos">
-        <div class="productos-container">
-            <h2 class="titulo-productos">Productos</h2>
-            <div class="productos-lista">
+    <section id="products">
+        <div class="products-container">
+            <h2 class="products-title">Products</h2>
+            <div class="products-list">
                 {% for product in collections.all.products %}
-                    <a href="{{ product.url }}" class="enlace-producto">
-                        <div class="producto">
-                            <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}" class="imagen-producto">
+                    <a href="{{ product.url }}" class="product-link">
+                        <div class="product">
+                            <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}" class="product-image">
                             <h3>{{ product.title }}</h3>
                             <p>{{ product.description | strip_html | truncate: 50 }}</p>
-                            <button class="btn-product">Comprar</button>
+                            <button class="btn-product">Buy</button>
                         </div>
                     </a>
                 {% endfor %}
             </div>
         </div>
-        <div class="descripcion-productos">
+        <div class="product-descriptions">
             {% for product in collections.all.products %}
-                <div class="descripcion-producto">
-                    <img src="{{ product.featured_image | img_url: 'large' }}" alt="{{ product.title }} grande" class="imagen-grande">
-                    <div class="texto-producto">
+                <div class="product-description">
+                    <img src="{{ product.featured_image | img_url: 'large' }}" alt="{{ product.title }} large" class="large-image">
+                    <div class="product-text">
                         <h3>{{ product.title }}</h3>
                         <p>{{ product.description }}</p>
                     </div>

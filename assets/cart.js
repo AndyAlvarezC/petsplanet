@@ -1,7 +1,7 @@
 const CartState = {
     items: [],
 
-    // Función auxiliar para llamar a la API de Shopify
+    // Helper function to call the Shopify API
     async fetchShopifyCart(endpoint, method, body = null) {
         try {
             const options = {
@@ -13,12 +13,12 @@ const CartState = {
             if (!response.ok) throw new Error(`Error ${response.status}: ${response.statusText}`);
             return await response.json();
         } catch (error) {
-            console.error(`Error en ${endpoint}:`, error);
+            console.error(`Error at ${endpoint}:`, error);
             return null;
         }
     },
 
-    // Cargar los elementos del carrito de Shopify
+    // Load Shopify cart items
     async load() {
         try {
             const shopifyCart = await this.fetchShopifyCart('/cart.js', 'GET');
@@ -38,7 +38,7 @@ const CartState = {
         }
     },
 
-    // Actualizar el UI del carrito
+    // Update the cart UI
     updateUI() {
         const cartCount = document.getElementById('cart-count');
         const totalItems = this.items.reduce((sum, item) => sum + item.quantity, 0);
@@ -79,7 +79,7 @@ const CartState = {
 
         cartTotal.textContent = formatMoney(this.items.reduce((sum, item) => sum + (item.price * item.quantity), 0));
 
-        // Añadir event listeners después de renderizar
+        // Add event listeners after rendering
         this.addEventListeners();
     },
 
@@ -126,12 +126,14 @@ const CartState = {
     openCart() {
         document.getElementById('cart-sidebar').classList.add('open');
         document.getElementById('cart-overlay').classList.add('show');
+        document.body.classList.add('cart-open');
         this.load();
     },
-
+    
     closeCart() {
         document.getElementById('cart-sidebar').classList.remove('open');
         document.getElementById('cart-overlay').classList.remove('show');
+        document.body.classList.remove('cart-open');
     },
 
     initializeCart() {
@@ -142,7 +144,7 @@ const CartState = {
     }
 };
 
-// Inicializar cuando el DOM esté listo
+// Initialize when the DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     CartState.initializeCart();
 });

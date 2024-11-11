@@ -52,12 +52,12 @@ class ProductSelector {
     }
 
     formatMoney(cents) {
-        return (cents / 100).toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
+        return (cents / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
     }
 
     handleAddToCart() {
         if (!this.selectedColor || !this.selectedSize) {
-            showNotification('Por favor, selecciona color y talla');
+            showNotification('Please select a color and size');
             return;
         }
         
@@ -74,12 +74,12 @@ class ProductSelector {
         };
     
         CartState.addItem(cartItem);
-        showNotification('¡Producto añadido al carrito!', 'success');
+        showNotification('Product added to cart!', 'success');
         CartState.openCart();
     }
 }
 
-// Inicializar cuando el DOM esté listo
+// Initialize when the DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     new ProductSelector();
 });
