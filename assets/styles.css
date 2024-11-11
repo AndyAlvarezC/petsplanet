@@ -2,14 +2,17 @@
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
-    scroll-behavior: smooth;
     box-sizing: border-box;
+    scroll-behavior: smooth;
 }
 
 :root {
     --primary-color: #C19A6B;
     --secondary-color: #f5f5f5;
-    --dark-color: #333;
+    --hover-color: #B87333;
+    --font-color: var(--secondary-color);
+    --dark-font-color: #000;
+    --transition-time: 0.5s ease;
 }
 
 section {
@@ -26,52 +29,45 @@ section {
     overflow: hidden;
 }
 
-#inicio::before {
+#inicio::before, #inicio::after {
     content: '';
     position: absolute;
     top: 0;
-    left: 0;
     width: 50%;
     height: 100%;
-    background-image: url("img1.png");
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
 }
 
+#inicio::before {
+    left: 0;
+    background-image: url("img1.png");
+}
+
 #inicio::after {
-    content: '';
-    position: absolute;
-    top: 0;
     right: 0;
-    width: 50%;
-    height: 100%;
     background-image: url("img2.png");
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
 }
 
 #inicio div {
     position: relative;
     z-index: 2;
-    width: 100%;
     text-align: center;
+}
+
+#inicio h1, #inicio p {
+    color: var(--font-color);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 #inicio h1 {
     font-size: 4.5rem;
-    color: var(--secondary-color);
-    text-align: center;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 #inicio p {
     font-size: 1.5rem;
-    color: var(--secondary-color);
-    text-align: center;
     margin-top: 1.5rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .btn {
@@ -80,44 +76,20 @@ section {
     align-items: center;
     padding: 1rem 2rem;
     background-color: var(--primary-color);
-    color: var(--secondary-color);
+    color: var(--font-color);
     text-decoration: none;
-    border-color: transparent;
     border-radius: 0.5rem;
-    transition: background-color 0.5s ease, transform 0.5s ease;
+    transition: background-color var(--transition-time), transform var(--transition-time);
     position: relative;
     top: 10rem;    
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    font-weight: 700;
 }
 
 .btn:hover {
-    background-color: var(--dark-color);
+    background-color: var(--hover-color);
     transform: scale(1.1);
     cursor: pointer;
-}
-
-.productos-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 2rem 2rem;
-    background-color: var(--secondary-color);
-    width: 100%;
-    height: 100vh;
-}
-
-.titulo-productos {
-    margin: 3rem 0;
-    color: var(--dark-color);
-    font-size: 2.5rem;
-    text-align: center;
-}
-
-.enlace-producto {
-    text-decoration: none;
-    color: inherit;
-    display: flex;
-    width: calc(33.333% - 2rem);
 }
 
 .producto {
@@ -131,13 +103,30 @@ section {
     border-radius: 0.5rem;
     padding: 1.5rem;
     background-color: var(--secondary-color);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-    transition: transform 0.5s ease;
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
+    transition: transform var(--transition-time);
     cursor: pointer;
 }
 
 .producto:hover {
     transform: scale(1.05);
+}
+
+.productos-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    background-color: var(--secondary-color);
+    height: 100vh;
+}
+
+.titulo-productos {
+    margin: 3rem 0;
+    color: var(--dark-font-color);
+    font-size: 2.5rem;
+    text-align: center;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .productos-lista {
@@ -148,30 +137,37 @@ section {
     width: 80%;
 }
 
+.enlace-producto {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    width: calc(33.333% - 2rem);
+}
+
 .imagen-producto {
     width: 100%;
     object-fit: cover;
     border-radius: 0.5rem;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
     margin-bottom: 1rem;
+}
+
+.producto h3, .producto p {
+    width: 100%;
+    text-align: center;
 }
 
 .producto h3 {
     font-size: 1.2rem;
     margin: 0.5rem 0;
-    text-align: center;
-    width: 100%;
 }
 
 .producto p {
-    flex-grow: 1;
-    text-align: center;
     margin: 0.5rem 0;
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
-    width: 100%;
 }
 
 .btn-product {
@@ -179,17 +175,18 @@ section {
     padding: 1rem;
     font-size: 1.2rem;
     background-color: var(--primary-color);
-    color: var(--secondary-color);
+    color: var(--font-color);
     border: none;
     border-radius: 0.5rem;
-    transition: background-color 0.5s ease;
+    transition: background-color var(--transition-time);
     cursor: pointer;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
     margin-top: 1rem;
+    font-weight: 700;
 }
 
 .btn-product:hover {
-    background-color: var(--dark-color);
+    background-color: var(--hover-color);
 }
 
 .descripcion-productos {
@@ -210,7 +207,7 @@ section {
     background-color: var(--secondary-color);
     border-radius: 0.5rem;
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
-    transition: transform 0.5s ease;
+    transition: transform var(--transition-time);
 }
 
 .descripcion-producto:hover {
@@ -220,11 +217,10 @@ section {
 
 .imagen-grande {
     width: 20%;
-    height: auto;
     max-height: 30%;
     object-fit: cover;
     border-radius: 0.5rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
     margin-right: 2rem;
 }
 
@@ -234,11 +230,11 @@ section {
 
 .texto-producto h3 {
     margin: 0.5rem 0;
-    color: var(--dark-color);
+    color: var(--dark-font-color);
     font-size: 2rem;
 }
 
 .texto-producto p {
-    color: var(--dark-color);
+    color: var(--dark-font-color);
     text-align: left;
 }
