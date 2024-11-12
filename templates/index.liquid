@@ -36,13 +36,15 @@
         </div>
         <div class="product-descriptions">
             {% for product in collections.all.products %}
-                <div class="product-description">
-                    <img src="{{ product.featured_image | img_url: 'large' }}" alt="{{ product.title }} large" class="large-image">
-                    <div class="product-text">
-                        <h3>{{ product.title }}</h3>
-                        <p>{{ product.description }}</p>
+                <a href="{{ product.url }}" class="product-description-link">
+                    <div class="product-description">
+                        <img src="{{ product.featured_image | img_url: 'large' }}" alt="{{ product.title }} large" class="large-image">
+                        <div class="product-text">
+                            <h3>{{ product.title }}</h3>
+                            <p>{{ product.description }}</p>
+                        </div>
                     </div>
-                </div>
+                </a>
             {% endfor %}
         </div>
     </section>

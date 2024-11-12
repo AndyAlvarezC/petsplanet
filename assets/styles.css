@@ -144,6 +144,11 @@ section {
     width: calc(33.333% - 2rem);
 }
 
+.product-description-link {
+    text-decoration: none;
+    color: inherit;
+}
+
 .product-image {
     width: 100%;
     object-fit: cover;

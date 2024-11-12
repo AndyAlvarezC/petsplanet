@@ -62,18 +62,22 @@
                 </div>
             </div>
 
-            <div class="sizes">
-                <h3>Size: <span id="selected-size">Select a size</span></h3>
-                <div class="size-options">
-                    {% assign unique_sizes = "" %}
-                    {% for variant in product.variants %}
-                        {% unless unique_sizes contains variant.option2 %}
-                            <button class="size" data-size="{{ variant.option2 }}" onclick="changeSize('{{ variant.option2 }}', {{ variant.price | money_without_currency }})">{{ variant.option2 }}</button>
-                            {% assign unique_sizes = unique_sizes | append: variant.option2 | append: "," %}
-                        {% endunless %}
-                    {% endfor %}
+            {% if product.options contains 'Size' %}
+                <div class="sizes">
+                    <h3>Size: <span id="selected-size">Select a size</span></h3>
+                    <div class="size-options">
+                        {% assign unique_sizes = "" %}
+                        {% for variant in product.variants %}
+                            {% unless unique_sizes contains variant.option2 %}
+                                <button class="size" data-size="{{ variant.option2 }}" onclick="changeSize('{{ variant.option2 }}', {{ variant.price | money_without_currency }})">{{ variant.option2 }}</button>
+                                {% assign unique_sizes = unique_sizes | append: variant.option2 | append: "," %}
+                            {% endunless %}
+                        {% endfor %}
+                    </div>
                 </div>
-            </div>
+            {% endif %}
+            
+            
 
             <div class="quantity">
                 <h3>Quantity</h3>
