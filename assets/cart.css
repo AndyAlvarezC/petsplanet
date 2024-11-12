@@ -51,10 +51,13 @@
     transition: right var(--transition-time) ease-in-out;
     display: flex;
     flex-direction: column;
+    transition: right 0.5s ease-in-out, opacity 0.5s ease;
+    opacity: 0;
 }
 
 .cart-sidebar.open {
     right: 0;
+    opacity: 1;
 }
 
 .cart-overlay {
@@ -66,10 +69,13 @@
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 1000;
     display: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
 }
 
 .cart-overlay.show {
     display: block;
+    opacity: 1;
 }
 
 .cart-header {
@@ -140,6 +146,18 @@
     align-items: center;
     gap: 0.5rem;
     margin-top: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    overflow: hidden;
+    min-width: 100px;  /* Asegura un ancho mínimo suficiente */
+    width: auto;  /* Permite que el contenedor se ajuste si es necesario */
+}
+
+.cart-item-quantity span {
+    flex: 1;
+    text-align: center;
+    color: var(--dark-color);
+    min-width: 30px;  /* Asegura que el número tenga espacio suficiente */
 }
 
 .cart-footer {
