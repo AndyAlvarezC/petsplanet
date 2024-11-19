@@ -37,3 +37,19 @@ document.addEventListener('DOMContentLoaded', function() {
         btn.addEventListener('click', () => setCurrency(btn.dataset.currency));
     });
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const menuToggle = document.querySelector(".menu-toggle");
+    const navMenu = document.querySelector(".nav-menu");
+
+    menuToggle.addEventListener("click", () => {
+        navMenu.classList.toggle("nav-open");
+    });
+
+    // Cierra el menú al hacer clic en un enlace
+    navMenu.addEventListener("click", (event) => {
+        if (event.target.tagName === "A") {
+            navMenu.classList.remove("nav-open");
+        }
+    });
+});

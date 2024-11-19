@@ -206,10 +206,23 @@ const CartState = {
         document.getElementById('cart-icon-container').addEventListener('click', () => this.openCart());
         document.getElementById('close-cart').addEventListener('click', () => this.closeCart());
         document.getElementById('cart-overlay').addEventListener('click', () => this.closeCart());
+    },
+
+    async handleCheckout() {
+        if (this.items.length === 0) {
+          // Muestra una alerta si el carrito está vacío
+        alert("Tu carrito está vacío. Por favor, agrega algunos artículos antes de proceder al checkout.");
+        } else {
+          // Redirige a la página de checkout si el carrito tiene artículos
+        window.location.href = "/checkout";
+        }
     }
 };
-
-// Initialize when the DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    CartState.initializeCart();
-});
+      // Actualiza el evento de clic del botón de Checkout
+    document.addEventListener('DOMContentLoaded', () => {
+        CartState.initializeCart();
+        document.querySelector('.btn-checkout').addEventListener('click', (event) => {
+          event.preventDefault(); // Evita la redirección predeterminada
+        CartState.handleCheckout();
+        });
+    });

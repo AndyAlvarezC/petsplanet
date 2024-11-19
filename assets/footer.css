@@ -19,7 +19,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 2rem 1rem;
+    padding-top: 2rem;
     background-color: var(--primary-color);
     color: var(--secondary-color);
     width: 100%;
@@ -28,7 +28,7 @@
 }
 
 .footer-links {
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     text-align: center;
 }
 
@@ -37,66 +37,13 @@
     margin: 0 2rem;
     text-decoration: none;
     font-weight: 600;
-    transition: color var(--transition-time);
 }
 
-.footer-link:hover {
-    color: var(--dark-font-color);
-}
 
-.payment-icons {
+.ultimate-badges {
     display: flex;
     justify-content: center;
-    gap: 1rem;
-}
-
-.payment-icons i {
-    font-size: 2rem;
-    color: #fff; /* El color se ajustará según el icono */
-    transition: color var(--transition-time);
-}
-
-/* Cambiar color de los íconos de pago a sus colores originales */
-.payment-icons .fab.fa-cc-visa {
-    color: #1A1F71; /* Visa */
-}
-
-.payment-icons .fab.fa-cc-mastercard {
-    color: #EB001B; /* MasterCard */
-}
-
-.payment-icons .fab.fa-cc-amex {
-    color: #2E77C1; /* American Express */
-}
-
-.payment-icons .fab.fa-google-pay {
-    color: #4285F4; /* Google Pay */
-}
-
-.payment-icons .fab.fa-apple-pay {
-    color: #000; /* Apple Pay */
-}
-
-.payment-icons .fab.fa-cc-bancontact {
-    color: #006A76; /* Bancontact */
-}
-
-.payment-icons .fab.fa-cc-ideal {
-    color: #1D5DB1; /* iDEAL */
-}
-
-.payment-icons .fab.fa-cc-maestro {
-    color: #009C8C; /* Maestro */
-}
-
-.payment-icons .fab.fa-shopify {
-    color: #96BF48; /* Shop Pay */
-}
-
-.payment-icons .fab.fa-cc-unionpay {
-    color: #0085C3; /* UnionPay */
-}
-
-.payment-icons .fab.fa-cc-paypal {
-    color: #003087; /* PayPal */
+    align-items: center;
+    width: 100%;
+    margin-bottom: 1rem;
 }

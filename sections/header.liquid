@@ -1,27 +1,18 @@
-<link rel="stylesheet" href="{{ 'cart.css' | asset_url }}">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
 <header>
     <div class="logo">
         <a href="{{ shop.url }}"><img src="{{ 'logo.png' | asset_url }}" alt="Store logo"></a>
     </div>
+    <button class="menu-toggle" aria-label="Toggle navigation">
+        <i class="fas fa-bars"></i>
+    </button>
     <nav>
-        <ul>
+        <ul class="nav-menu">
             <li><a href="{{ shop.url }}#home">Home</a></li>
             <li><a href="{{ shop.url }}#products">Products</a></li>
             <li><a href="{{ shop.url }}#contact">Contact</a></li>
         </ul>
     </nav>
     <div class="header-icons">
-        <div class="language-switcher">
-            <button class="lang-btn" data-lang="es">ES</button>
-            <button class="lang-btn" data-lang="en">EN</button>
-        </div>
-        <div class="currency-switcher">
-            <button class="currency-btn" data-currency="eur">€</button>
-            <button class="currency-btn" data-currency="usd">$</button>
-        </div>
-        <i class="fas fa-user"></i>
         {% render 'cart' %}
     </div>
 </header>
