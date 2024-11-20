@@ -17,7 +17,7 @@
 }
 
 body {
-    background-color: #eaeaea;
+    background-color: #f5f5f5;
 }
 
 section {
@@ -104,65 +104,86 @@ section {
     justify-content: center;
     align-items: center;
     margin: auto;
-    padding: 2rem;
+    padding: 3rem;
     min-height: 95vh;
 }
 
 .products-list {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
     gap: 4rem;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1400px;
 }
 
 .product-link {
     text-decoration: none;
     color: inherit;
-    width: 300px;
-    margin: 1rem;
+    width: 100%;
 }
 
 .product {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    align-items: center;
     width: 100%;
     height: 100%;
-    border-radius: 0.5rem;
-    padding: 1.5rem;
-    background-color: var(--secondary-color);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
-    transition: transform var(--transition-time);
+    border-radius: 12px;
+    background-color: white;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    overflow: hidden;
 }
 
 .product:hover {
     transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.image-wrapper {
+    width: 100%;
+    height: 350px;
+    overflow: hidden;
+    position: relative;
 }
 
 .product-image {
     width: 100%;
-    height: 200px;
+    height: 100%;
     object-fit: cover;
-    border-radius: 0.5rem;
-    margin-bottom: 1rem;
+    transition: transform 0.5s ease;
+}
+
+.product:hover .product-image {
+    transform: scale(1.05);
+}
+
+.product-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 .product h3 {
-    font-size: 1.2rem;
-    margin: 0.5rem 0;
-    text-align: center;
+    font-size: 1.3rem;
+    margin: 0;
+    color: #333;
+    font-weight: 600;
 }
 
-.product p {
-    margin: 0.5rem 0;
-    text-align: center;
-    overflow: hidden;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+.description {
+    font-size: 1rem;
+    color: #666;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.price {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+    margin-top: 0.5rem;
 }
 
 .btn-product {
@@ -170,63 +191,17 @@ section {
     padding: 1rem;
     font-size: 1.2rem;
     background-color: var(--primary-color);
-    color: var(--font-color);
+    color: white;
     border: none;
-    border-radius: 0.5rem;
-    transition: background-color var(--transition-time);
+    border-radius: 8px;
     cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    margin-top: 1rem;
-    font-weight: 700;
+    transition: background-color 0.3s ease;
+    font-weight: 600;
+    margin-top: auto;
 }
 
 .btn-product:hover {
     background-color: var(--hover-color);
-}
-
-/* Product Descriptions */
-.product-descriptions {
-    padding: 2rem;
-    background-color: var(--primary-color);
-    text-decoration: none;
-}
-
-.product-description {
-    display: flex;
-    align-items: center;
-    padding: 2rem;
-    margin: 4rem auto;
-    max-width: 80%;
-    background-color: var(--secondary-color);
-    border-radius: 0.5rem;
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.5);
-    transition: transform var(--transition-time);
-}
-
-.product-description:hover {
-    transform: scale(1.02);
-}
-
-.large-image {
-    width: 200px;
-    height: 200px;
-    object-fit: cover;
-    border-radius: 0.5rem;
-    margin-right: 2rem;
-}
-
-.product-text {
-    flex: 1;
-}
-
-.product-text h3 {
-    margin: 0.5rem 0;
-    color: var(--dark-font-color);
-    font-size: 2rem;
-}
-
-.product-text p {
-    color: var(--dark-font-color);
 }
 
 /* Responsive Media Queries */
@@ -275,3 +250,20 @@ section {
     }
 }
 
+.fade-up {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.fade-up.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.fade-up:nth-child(2) {
+    transition-delay: 0.2s;
+}
+.fade-up:nth-child(3) {
+    transition-delay: 0.4s;
+}

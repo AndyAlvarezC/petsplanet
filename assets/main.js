@@ -83,3 +83,30 @@ class ProductSelector {
 document.addEventListener('DOMContentLoaded', () => {
     new ProductSelector();
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Configuración del Intersection Observer
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.15 // El elemento será visible cuando el 15% esté en el viewport
+    };
+
+    // Callback que se ejecuta cuando un elemento entra en el viewport
+    const observerCallback = (entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+                // Opcional: dejar de observar el elemento una vez que se ha animado
+                observer.unobserve(entry.target);
+            }
+        });
+    };
+
+    // Crear el observer
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+    // Observar todos los elementos con la clase fade-up
+    const fadeElements = document.querySelectorAll('.fade-up');
+    fadeElements.forEach(element => observer.observe(element));
+});

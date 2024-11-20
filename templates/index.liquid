@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="{{ 'contact.css' | asset_url }}">
 </head>
 <body>
-    <section id="home">
+    <section id="home" class="fade-up">
         <div>
             <h1>Welcome to {{ shop.name }}</h1>
             <p>The best pet store</p>
@@ -18,37 +18,34 @@
         </div>
     </section>
     
-    <section id="products">
+    <section id="products" class="fade-up">
         <div class="products-container">
             <div class="products-list">
-                {% for product in collections.all.products %}
-                    <a href="{{ product.url }}" class="product-link">
-                        <div class="product">
-                            <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}" class="product-image">
-                            <h3>{{ product.title }}</h3>
-                            <p>{{ product.description | strip_html | truncate: 50 }}</p>
-                            <button class="btn-product">Buy</button>
-                        </div>
-                    </a>
-                {% endfor %}
-            </div>
-        </div>
-        <div class="product-descriptions">
             {% for product in collections.all.products %}
-                <a href="{{ product.url }}" class="product-description-link">
-                    <div class="product-description">
-                        <img src="{{ product.featured_image | img_url: 'large' }}" alt="{{ product.title }} large" class="large-image">
-                        <div class="product-text">
-                            <h3>{{ product.title }}</h3>
-                            <p>{{ product.description }}</p>
-                        </div>
+                <a href="{{ product.url }}" class="product-link">
+                <div class="product">
+                    <div class="image-wrapper">
+                    <img 
+                        src="{{ product.featured_image | img_url: 'large' }}" 
+                        alt="{{ product.title }}" 
+                        class="product-image"
+                        loading="lazy"
+                    >
                     </div>
+                    <div class="product-content">
+                    <h3>{{ product.title }}</h3>
+                    <p class="description">{{ product.description | strip_html | truncate: 50 }}</p>
+                    <div class="price">{{ product.price | money_with_currency }}</div>
+                    <button class="btn-product">Buy</button>
+                    </div>
+                </div>
                 </a>
             {% endfor %}
+            </div>
         </div>
     </section>
 
-    <section id="contact">
+    <section id="contact" class="fade-up">
         <div class="contact-container">
             <h2>Contact Us</h2>
             <form action="https://your-store-name.myshopify.com/contact#contact_form" method="post" id="contact-form">

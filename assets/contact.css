@@ -1,33 +1,16 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-    scroll-behavior: smooth;
-}
-
-:root {
-    --primary-color: #C19A6B;
-    --secondary-color: #f5f5f5;
-    --hover-color: #B87333;
-    --font-color: var(--secondary-color);
-    --dark-font-color: #000;
-    --transition-time: 0.5s ease;
-}
-/* General styles */
 .contact-container {
-    max-width: 60%; /* Anchura fluida */
+    max-width: 60%;
     margin: 5rem auto;
-    padding: 2rem; /* Espaciado adaptable */
-    background-color: #f9f9f9;
-    border-radius: 0.5rem; /* Bordes suaves */
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 0.5rem;
     box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.1);
 }
 
 .contact-container h2 {
     text-align: center;
     margin-bottom: 2rem;
-    font-size: 1.8rem; /* Tamaño adaptable */
+    font-size: 1.8rem;
     color: #333;
 }
 
@@ -44,23 +27,23 @@
 
 .form-group input,
 .form-group textarea {
-    width: 100%; /* Ocupa todo el ancho disponible */
-    padding: 1rem; /* Espaciado adaptable */
-    font-size: 1rem; /* Tamaño de texto relativo */
+    width: 100%;
+    padding: 1rem;
+    font-size: 1rem;
     border: 0.0625rem solid #ccc;
     border-radius: 0.5rem;
-    box-sizing: border-box; /* Incluye padding en el ancho total */
+    box-sizing: border-box;
 }
 
 .form-group textarea {
     resize: vertical;
-    min-height: 6rem; /* Altura mínima */
+    min-height: 6rem;
     resize: none;
 }
 
 .submit-btn {
     display: block;
-    width: 100%; /* Botón adaptado al ancho */
+    width: 100%;
     padding: 1rem;
     font-size: 1.2rem;
     color: #fff;
@@ -76,9 +59,6 @@
     background-color: var(--hover-color);
 }
 
-/* Responsive design */
-
-/* Tamaño de tablet y menor */
 @media (max-width: 768px) {
     .contact-container {
         padding: 1.5rem;
@@ -104,7 +84,6 @@
     }
 }
 
-/* Tamaño de móviles pequeños */
 @media (max-width: 480px) {
     .contact-container {
         padding: 1rem;
