@@ -110,3 +110,103 @@ document.addEventListener('DOMContentLoaded', () => {
     const fadeElements = document.querySelectorAll('.fade-up');
     fadeElements.forEach(element => observer.observe(element));
 });
+
+class ProductSlider {
+    constructor() {
+        this.currentIndex = 0;
+        this.productLinks = document.querySelectorAll('.product-link');
+        this.totalProducts = this.productLinks.length;
+        
+        this.init();
+    }
+
+    init() {
+        if (window.innerWidth <= 768) {
+            this.setupSlider();
+            this.updateSlides();
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                if (window.innerWidth <= 768) {
+                    this.setupSlider();
+                } else {
+                    this.removeSlider();
+                }
+            });
+        }
+    }
+
+    setupSlider() {
+        // Create slider controls if they don't exist
+        if (!document.querySelector('.slider-controls')) {
+            const controls = document.createElement('div');
+            controls.className = 'slider-controls';
+            controls.innerHTML = `
+                <button class="slider-control prev">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="slider-control next">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            `;
+            
+            const productsContainer = document.querySelector('.products-container');
+            productsContainer.style.position = 'relative';
+            productsContainer.appendChild(controls);
+
+            // Add event listeners
+            controls.querySelector('.prev').addEventListener('click', () => this.prevSlide());
+            controls.querySelector('.next').addEventListener('click', () => this.nextSlide());
+        }
+    }
+
+    removeSlider() {
+        const controls = document.querySelector('.slider-controls');
+        if (controls) {
+            controls.remove();
+        }
+
+        this.productLinks.forEach(link => {
+            link.classList.remove('active', 'prev', 'next');
+            link.style.transform = '';
+            link.style.opacity = '';
+        });
+    }
+
+    updateSlides() {
+        this.productLinks.forEach((link, index) => {
+            link.classList.remove('active', 'prev', 'next');
+            
+            if (index === this.currentIndex) {
+                link.classList.add('active');
+            } else if (index === this.getPrevIndex()) {
+                link.classList.add('prev');
+            } else if (index === this.getNextIndex()) {
+                link.classList.add('next');
+            }
+        });
+    }
+
+    getPrevIndex() {
+        return (this.currentIndex - 1 + this.totalProducts) % this.totalProducts;
+    }
+
+    getNextIndex() {
+        return (this.currentIndex + 1) % this.totalProducts;
+    }
+
+    prevSlide() {
+        this.currentIndex = this.getPrevIndex();
+        this.updateSlides();
+    }
+
+    nextSlide() {
+        this.currentIndex = this.getNextIndex();
+        this.updateSlides();
+    }
+}
+
+// Initialize when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    new ProductSlider();
+});
