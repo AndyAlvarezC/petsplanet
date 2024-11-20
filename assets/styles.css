@@ -225,48 +225,55 @@ section {
     }
 
     .products-list {
-        justify-content: center;
-    }
-
-    .product-link {
-        width: 100%;
-        max-width: 300px;
-        margin: 0.5rem;
-    }
-
-    .products-list {
         display: flex;
         position: relative;
         overflow: hidden;
         width: 100%;
         height: 600px;
         gap: 0;
+        justify-content: center;
+        align-items: center;
     }
 
     .product-link {
         position: absolute;
-        width: 100%;
-        height: 100%;
-        transition: all 0.5s ease;
+        width: 80%; /* Controla el tamaño de las tarjetas (se reduce para las no activas) */
+        height: 90%;
+        transition: all 0.5s ease-in-out;
         opacity: 0;
+        transform: scale(0.7); /* Reduce el tamaño base */
     }
 
+    /* Producto activo */
     .product-link.active {
         opacity: 1;
-        transform: translateX(0);
-        z-index: 2;
+        transform: scale(1); /* Tamaño completo */
+        z-index: 3;
     }
 
+    /* Productos anteriores y siguientes */
     .product-link.prev {
-        transform: translateX(-100%);
-        opacity: 0.5;
-        z-index: 1;
+        opacity: 0.6; /* Reduce visibilidad */
+        z-index: 2;
+        transform: translateX(-30%) scale(0.7); /* Mover ligeramente a la izquierda */
     }
 
     .product-link.next {
-        transform: translateX(100%);
-        opacity: 0.5;
+        opacity: 0.6; /* Reduce visibilidad */
+        z-index: 2;
+        transform: translateX(30%) scale(0.7); /* Mover ligeramente a la izquierda */
+    }
+
+    /* Productos más lejanos */
+    .product-link.prev-prev,
+    .product-link.next-next {
+        opacity: 0.4;
         z-index: 1;
+        transform: scale(0.6); /* Aún más pequeños */
+    }
+
+    .product-link:not(.active) {
+        filter: blur(2px);
     }
 
     .slider-controls {

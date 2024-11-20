@@ -110,13 +110,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const fadeElements = document.querySelectorAll('.fade-up');
     fadeElements.forEach(element => observer.observe(element));
 });
-
 class ProductSlider {
     constructor() {
         this.currentIndex = 0;
         this.productLinks = document.querySelectorAll('.product-link');
         this.totalProducts = this.productLinks.length;
-        
+
         this.init();
     }
 
@@ -124,8 +123,8 @@ class ProductSlider {
         if (window.innerWidth <= 768) {
             this.setupSlider();
             this.updateSlides();
-            
-            // Handle window resize
+
+            // Manejar redimensionamiento de la ventana
             window.addEventListener('resize', () => {
                 if (window.innerWidth <= 768) {
                     this.setupSlider();
@@ -137,7 +136,6 @@ class ProductSlider {
     }
 
     setupSlider() {
-        // Create slider controls if they don't exist
         if (!document.querySelector('.slider-controls')) {
             const controls = document.createElement('div');
             controls.className = 'slider-controls';
@@ -149,12 +147,11 @@ class ProductSlider {
                     <i class="fas fa-chevron-right"></i>
                 </button>
             `;
-            
+
             const productsContainer = document.querySelector('.products-container');
             productsContainer.style.position = 'relative';
             productsContainer.appendChild(controls);
 
-            // Add event listeners
             controls.querySelector('.prev').addEventListener('click', () => this.prevSlide());
             controls.querySelector('.next').addEventListener('click', () => this.nextSlide());
         }
@@ -167,7 +164,7 @@ class ProductSlider {
         }
 
         this.productLinks.forEach(link => {
-            link.classList.remove('active', 'prev', 'next');
+            link.classList.remove('active', 'prev', 'next', 'prev-prev', 'next-next');
             link.style.transform = '';
             link.style.opacity = '';
         });
@@ -175,14 +172,18 @@ class ProductSlider {
 
     updateSlides() {
         this.productLinks.forEach((link, index) => {
-            link.classList.remove('active', 'prev', 'next');
-            
+            link.classList.remove('active', 'prev', 'next', 'prev-prev', 'next-next');
+
             if (index === this.currentIndex) {
                 link.classList.add('active');
             } else if (index === this.getPrevIndex()) {
                 link.classList.add('prev');
             } else if (index === this.getNextIndex()) {
                 link.classList.add('next');
+            } else if (index === this.getPrevPrevIndex()) {
+                link.classList.add('prev-prev');
+            } else if (index === this.getNextNextIndex()) {
+                link.classList.add('next-next');
             }
         });
     }
@@ -193,6 +194,14 @@ class ProductSlider {
 
     getNextIndex() {
         return (this.currentIndex + 1) % this.totalProducts;
+    }
+
+    getPrevPrevIndex() {
+        return (this.currentIndex - 2 + this.totalProducts) % this.totalProducts;
+    }
+
+    getNextNextIndex() {
+        return (this.currentIndex + 2) % this.totalProducts;
     }
 
     prevSlide() {
@@ -206,7 +215,6 @@ class ProductSlider {
     }
 }
 
-// Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     new ProductSlider();
 });
