@@ -34,7 +34,6 @@
                     </div>
                     <div class="product-content">
                     <h3>{{ product.title }}</h3>
-                    <p class="description">{{ product.description | strip_html | truncate: 50 }}</p>
                     <div class="price">{{ product.price | money_with_currency }}</div>
                     <button class="btn-product">Buy</button>
                     </div>
