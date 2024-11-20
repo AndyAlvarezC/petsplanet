@@ -52,19 +52,6 @@
     transition: transform 0.5s ease;
 }
 
-.thumbnail:hover {
-    transform: scale(1.04);
-}
-
-.thumbnail {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.thumbnail:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-}
-
 .main-image img {
     width: 30rem;
     border-radius: 1rem;
@@ -263,7 +250,6 @@
     color: inherit;
 }
 
-/* Estilos para pantallas más pequeñas */
 @media (max-width: 768px) {
     .product-container {
         flex-direction: column;
@@ -271,27 +257,51 @@
         margin: 3rem auto;
     }
 
+    .main-image {
+        order: 1;
+        width: 80%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: auto;
+
+    }
+
+    .main-image img {
+        margin-top: 3rem;
+        width: auto;
+        border-radius: 0.5rem;
+    }
+
     .gallery {
+        order: 2;
+        display: flex;
         flex-direction: row;
         max-height: none;
-        width: auto;
         overflow-x: auto;
         overflow-y: hidden;
-        padding: 0.3rem 0.5rem;
+        margin-top: 1rem;
+        padding: 0.5rem 0;
+        width: 100%;
+        justify-content: flex-start; /* Changed from center to flex-start */
+        align-items: center;
+        gap: 0.5rem; /* Added to ensure spacing between thumbnails */
+    }
+
+    .gallery::-webkit-scrollbar {
+        display: none; /* Hides scrollbar but keeps scrolling functionality */
     }
 
     .thumbnail {
         width: 3rem;
         height: 3rem;
-    }
-
-    .main-image img {
-        width: 100%;
-        border-radius: 0.5rem;
+        margin: 0 0.25rem;
+        flex-shrink: 0; /* Prevents thumbnails from shrinking */
     }
 
     .product-info {
-        padding: 1rem;
+        order: 3;
+        padding: 1rem 0;
     }
 
     .price {
@@ -319,12 +329,27 @@
 
     .color-option,
     .size {
-        width: 2rem;
-        height: 2rem;
+        padding: 0.4rem 0.8rem;
         font-size: 0.8rem;
     }
 
     .btn-cart {
         width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-image img {
+        width: 65%;
+        height: 50%;
+    }
+
+    .gallery {
+        width: 80%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        margin: auto;
     }
 }
