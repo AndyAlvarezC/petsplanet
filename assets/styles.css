@@ -224,6 +224,10 @@ section {
         margin-bottom: 1rem;
     }
 
+    .product {
+        max-height: 500px;
+    }
+
     .products-list {
         display: flex;
         position: relative;

@@ -173,7 +173,8 @@ class ProductSlider {
     updateSlides() {
         this.productLinks.forEach((link, index) => {
             link.classList.remove('active', 'prev', 'next', 'prev-prev', 'next-next');
-
+    
+            // Asignar clases según la posición
             if (index === this.currentIndex) {
                 link.classList.add('active');
             } else if (index === this.getPrevIndex()) {
@@ -185,8 +186,30 @@ class ProductSlider {
             } else if (index === this.getNextNextIndex()) {
                 link.classList.add('next-next');
             }
+    
+            // Manejar clics en tarjetas no activas
+            link.onclick = (e) => {
+                // Si el producto no está activo, solo lo movemos al frente
+                if (!link.classList.contains('active')) {
+                    e.preventDefault(); // Prevenir la navegación
+    
+                    // Mover al frente
+                    this.currentIndex = index;
+    
+                    // Actualizar las diapositivas
+                    this.updateSlides();
+                } else {
+                    // Si está activo, redirigir a la página del producto
+                    // Aquí puedes agregar la lógica para redirigir a la URL del producto
+                    const productUrl = link.getAttribute('href');
+                    if (productUrl) {
+                        window.location.href = productUrl;
+                    }
+                }
+            };
         });
     }
+    
 
     getPrevIndex() {
         return (this.currentIndex - 1 + this.totalProducts) % this.totalProducts;
